@@ -4,6 +4,7 @@ namespace Stevebauman\Translation;
 
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\Translation as TranslationModel;
+use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Session\SessionManager as Session;
 use Illuminate\Config\Repository as Config;
 
@@ -35,6 +36,13 @@ class Translation {
     protected $translationModel;
 
     /**
+     * Holds the current cache instance
+     *
+     * @var Cache
+     */
+    protected $cache;
+
+    /**
      * Holds the current session instance
      *
      * @var Session
@@ -51,13 +59,20 @@ class Translation {
     /**
      * @param Config $config
      * @param Session $session
+     * @param Cache $cache
      * @param LocaleModel $localeModel
      * @param TranslationModel $translationModel
      */
-    public function __construct(Config $config, Session $session, LocaleModel $localeModel, TranslationModel $translationModel)
+    public function __construct(
+        Config $config,
+        Session $session,
+        Cache $cache,
+        LocaleModel $localeModel,
+        TranslationModel $translationModel)
     {
         $this->config = $config;
         $this->session = $session;
+        $this->cache = $cache;
 
         $this->localeModel = $localeModel;
         $this->translationModel = $translationModel;

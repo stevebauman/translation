@@ -24,7 +24,7 @@ class TranslationServiceProvider extends ServiceProvider {
 
 		$this->app['translation'] = $this->app->share(function($app)
 		{
-			return new Translation($app['config'], $app['session'], new LocaleModel, new TranslationModel);
+			return new Translation($app['config'], $app['session'], $app['cache'], new LocaleModel, new TranslationModel);
 		});
 
 		include __DIR__ .'/../../helpers.php';

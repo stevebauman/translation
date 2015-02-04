@@ -58,7 +58,7 @@ To switch languages for the users session, all you need to call is:
 
 Locales are automatically created when you call the `Translation::setLocale($code)` method,
 and when the translate function is called, it will automatically create a new translation record
-for the new locale, with the default locale translation.
+for the new locale, with the default locale translation. The default locale is taken from the laravel `app.php` config file.
 
 Now, once you visit the page you'll have this in your `locales` table:
 
@@ -71,5 +71,7 @@ And this in your `translations` table:
     | id | locale_id | translation_id | translation |
        1        NULL         NULL        'Translate me!'
        2        NULL          1          'Translate me!'
-       
-You provide you're own way of updating translations (controllers/views etc).
+
+You can now update the translation on the new record and it will be shown wherever `_t('Translate me')` is called.
+
+You must provide you're own way of updating translations (controllers/views etc).

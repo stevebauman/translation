@@ -1,6 +1,7 @@
 {
     "name": "stevebauman/translation",
-    "description": "",
+    "description": "An easy database driven translator for Laravel 4",
+    "tags": ["lang", "translation", "translate", "localization", "localize", "laravel"],
     "authors": [
         {
             "name": "Steve Bauman",

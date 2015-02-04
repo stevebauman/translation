@@ -47,15 +47,19 @@ In your `locales` database table you'll have:
     | id | code | name | lang_code |
        1    en    NULL      NULL
 
-In your 'translations' database table you'll have:
+In your `translations` database table you'll have:
 
     | id | locale_id | translation_id | translation |
       1        NULL         NULL        'Translate me!'
-      
+
 To switch languages for the users session, all you need to call is:
 
     Translation::setLocale('fr') // Setting to French locale
-    
+
+Locales are automatically created when you call the `Translation::setLocale($code)` method,
+and when the translate function is called, it will automatically create a new translation record
+for the new locale, with the default locale translation.
+
 Now, once you visit the page you'll have this in your `locales` table:
 
     | id | code | name | lang_code |

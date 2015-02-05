@@ -84,8 +84,9 @@ class Translation {
      * Returns the translation for the current locale
      *
      * @param string $text
+     * @param array $data
      */
-    public function translate($text = '')
+    public function translate($text = '', $data= array())
     {
         $defaultTranslation = $this->getDefaultTranslation($text);
 
@@ -213,6 +214,7 @@ class Translation {
         $locale = $this->findLocaleByCode($this->getDefaultLocale());
 
         return $this->translationModel
+            ->remember(1)
             ->where('locale_id', $locale->id)
             ->where('translation', $text)->first();
     }
@@ -225,7 +227,9 @@ class Translation {
      */
     private function findLocaleByCode($code = '')
     {
-        return $this->localeModel->where('code', $code)->first();
+        return $this->localeModel
+            ->remember(1)
+            ->where('code', $code)->first();
     }
 
     /**
@@ -250,7 +254,9 @@ class Translation {
      */
     private function findTranslationByLocaleIdAndParentId($localeId, $parentId)
     {
+
         return $this->translationModel
+            ->remember(1)
             ->where('locale_id', $localeId)
             ->where('translation_id', $parentId)->first();
     }

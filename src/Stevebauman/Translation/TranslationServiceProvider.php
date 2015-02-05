@@ -27,6 +27,14 @@ class TranslationServiceProvider extends ServiceProvider {
 			return new Translation($app['config'], $app['session'], $app['cache'], new LocaleModel, new TranslationModel);
 		});
 
+		$this->app->bind('translation:scan', function(){
+			return new Commands\ScanCommand();
+		});
+
+		$this->commands(array(
+			'translation:scan',
+		));
+
 		include __DIR__ .'/../../helpers.php';
 	}
 

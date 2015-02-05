@@ -1,4 +1,5 @@
-#Translation for Laravel 4
+![Translation Banner]
+(https://github.com/stevebauman/translation/blob/master/translation-banner.jpg)
 
 ##Installation
 
@@ -72,6 +73,6 @@ And this in your `translations` table:
        1        NULL         NULL        'Translate me!'
        2        NULL          1          'Translate me!'
 
-You can now update the translation on the new record and it will be shown wherever `_t('Translate me')` is called.
+You can now update the translation on the new record and it will be shown wherever `_t('Translate me!')` is called.
 
 You must provide you're own way of updating translations (controllers/views etc).

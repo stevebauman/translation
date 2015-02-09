@@ -82,7 +82,12 @@ Run the migrations
     php artisan migrate --package="stevebauman/translation"
     
 Your good to go!
-    
+
+##TO-DO
+
+* Caching (underway)
+* Tests
+
 ##Usage
 
 Anywhere in your application, either use the the shorthand function (can be disabled in config file)

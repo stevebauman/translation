@@ -81,6 +81,11 @@ class ScanCommand extends Command {
         );
     }
 
+    /**
+     * Returns an array of accepted command options
+     *
+     * @return array
+     */
     protected function getOptions()
     {
         return array(
@@ -110,6 +115,12 @@ class ScanCommand extends Command {
         }
     }
 
+    /**
+     * Scans the inserted directory string and processes each file that's returned
+     *
+     * @param string $directory
+     * @return int
+     */
     private function scanDirectory($directory)
     {
         $files = $this->dirToArray($directory);

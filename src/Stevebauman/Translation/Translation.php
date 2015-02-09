@@ -88,59 +88,36 @@ class Translation {
      * @param string $text
      * @param array $data
      */
-    public function translate($text = '', $data= array())
+    public function translate($text = '', $data = array())
     {
         $defaultTranslation = $this->getDefaultTranslation($text);
 
-        /**
-         * If a default translation record exists for inputted text, we'll try to find the
-         * translation by the current locale ID and return the text. If there is no translation for the text
-         * we'll create a new translation record for the session locale and insert the default
-         * translation text
-         */
-        if($defaultTranslation)
+        $toLocale = $this->firstOrCreateLocale($this->getLocale());
+
+        $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
+
+        if($translation)
         {
-            $toLocale = $this->firstOrCreateLocale($this->getLocale());
 
-            $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
-
-            if($translation)
-            {
-                return $translation->translation;
-
-            } else {
-
-                /*
-                 * If the default translation locale doesn't equal the locale to translate to,
-                 * we'll create a new translation record with the default
-                 * translation text and return the default translation text
-                 */
-                if($defaultTranslation->locale_id != $toLocale->id) {
-
-                    $translation = $this->createTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
-
-                    return $translation->translation;
-
-                }
-
-                return $defaultTranslation->translation;
-            }
+            return $translation->translation;
 
         } else {
 
             /*
-             * Default translation doesn't exist, lets get the default locale record
-             * and create the translation, then run it through again so it creates
-             * the translation record for the current locale in the session
+             * If the default translation locale doesn't equal the locale to translate to,
+             * we'll create a new translation record with the default
+             * translation text and return the default translation text
              */
-            $defaultLocale = $this->firstOrCreateLocale($this->getDefaultLocale());
+            if($defaultTranslation->locale_id != $toLocale->id) {
 
-            $translation = $this->createTranslation($defaultLocale, $text);
+                $translation = $this->createTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
-            return $translation->translation;
+                return $translation->translation;
 
+            }
+
+            return $defaultTranslation->translation;
         }
-
     }
 
     /**
@@ -216,11 +193,9 @@ class Translation {
     {
         $locale = $this->firstOrCreateLocale($this->getDefaultLocale());
 
-        return $this->translationModel
-            ->remember(1)
-            ->where('locale_id', $locale->id)
-            ->where('translation', $text)
-            ->first();
+        $translation = $this->createTranslation($locale, $text);
+
+        return $translation;
     }
 
     /**

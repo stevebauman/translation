@@ -55,7 +55,7 @@ Seen:
     Bienvenue sur notre page d'accueil
     
 Notice that we didn't actually change the text inside the view, which means everything stays completely readable in your
-locale to you (the developer!), which means no more text strings indicating what is actually there such as:
+locale to you (the developer!), which means no more text strings trying to figure out what is actually displayed there:
 
     {{ trans('home.index.welcome') }}
     
@@ -103,10 +103,10 @@ And you can even translate models easy by just plugging in your content:
     
 In your `locales` database table you'll have:
 
-    | id | code | name | lang_code |
-       1    en    NULL      NULL
+    | id | code |  name  | display_name | lang_code |
+       1    en    English      NULL          NULL
 
-In your `translations` database table you'll have:
+In your `locale_translations` database table you'll have:
 
     | id | locale_id | translation_id | translation |
       1        NULL         NULL        'Translate me!'
@@ -121,15 +121,15 @@ for the new locale, with the default locale translation. The default locale is t
 
 Now, once you visit the page you'll have this in your `locales` table:
 
-    | id | code | name | lang_code |
-       1    en    NULL      NULL
-       2    fr    NULL      NULL
+    | id | code | name | display_name | lang_code |
+       1    en    English     NULL         NULL
+       2    fr    French      NULL         NULL
 
-And this in your `translations` table:
+And this in your `locale_translations` table:
 
     | id | locale_id | translation_id | translation |
-       1        NULL         NULL        'Translate me!'
-       2        NULL          1          'Translate me!'
+       1        1         NULL        'Translate me!'
+       2        2          1          'Traduisez-moi !'
 
 You can now update the translation on the new record and it will be shown wherever `_t('Translate me!')` is called.
 

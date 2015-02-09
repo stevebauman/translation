@@ -25,7 +25,7 @@ class LocaleTranslation extends Model {
      */
     public function locale()
     {
-        return $this->belongsTo('Stevebauman\Translation\Models\Locale', 'id', 'locale_id');
+        return $this->belongsTo('Stevebauman\Translation\Models\Locale','locale_id', 'id');
     }
 
     /**

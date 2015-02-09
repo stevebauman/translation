@@ -76,3 +76,30 @@ And this in your `translations` table:
 You can now update the translation on the new record and it will be shown wherever `_t('Translate me!')` is called.
 
 You must provide you're own way of updating translations (controllers/views etc).
+
+##Commands
+
+####Scan
+
+The scan command accepts one argument (directory) and one option (locale). It will look through each file in the directory
+and add the translation in the database that has the format of:
+
+    _t('')
+    _t("")
+    Translation::translate('')
+    Translation::translate("")
+
+To perform the scan, use artisan like so:
+
+    php artisan translation:scan directory --locale="en"
+
+Specifying the directory is mandatory.
+
+For example, to scan your views directory, use:
+
+    php artisan translation:scan app/views
+   
+If you specify a locale, it will add all the translations for the app locale, as well as the specified locale.
+
+For example if your default app locale was 'en', and you supply 'fr' to the locale option, it will generate the translation records
+for both locales.

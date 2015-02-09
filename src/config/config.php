@@ -8,11 +8,32 @@ return array(
 
     /**
      * Enables use of the shorthand translation function _l($translation, $locale = NULL)
+     *
+     * Must be boolean
      */
     'shorthand_enabled' => true,
 
+    /**
+     * Automatically translates text inserted by using google translate.
+     *
+     * !! Limit of 1300 Characters per request !!
+     *
+     * Must be boolean
+     */
+    'auto_translate' => true,
+
+    /*
+     * Runs translations through php function `ucfirst` to upper case the first
+     * letter of returned translations.
+     *
+     * Must be boolean
+     */
+    'auto_translate_ucfirst' => true,
+
     /*
      * The locales array for converting a locale code into the english language name
+     *
+     * Must be array
      */
     'locales' => array(
         'aa' => 'Afar',

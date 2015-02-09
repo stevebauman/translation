@@ -2,6 +2,7 @@
 
 namespace Stevebauman\Translation;
 
+use Stichoza\Google\GoogleTranslate;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCode;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
@@ -116,7 +117,9 @@ class Translation {
                  */
                 if($defaultTranslation->locale_id != $toLocale->id) {
 
-                    $this->createTranslation($toLocale->id, $defaultTranslation->translation, $defaultTranslation->id);
+                    $translation = $this->createTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
+
+                    return $translation->translation;
 
                 }
 
@@ -132,7 +135,7 @@ class Translation {
              */
             $defaultLocale = $this->firstOrCreateLocale($this->getDefaultLocale());
 
-            $translation = $this->createTranslation($defaultLocale->id, $text);
+            $translation = $this->createTranslation($defaultLocale, $text);
 
             return $translation->translation;
 
@@ -280,18 +283,43 @@ class Translation {
     /**
      * Creates a translation
      *
-     * @param $localeId
+     * @param $locale
      * @param $text
-     * @param null $parentId
+     * @param null $parentTranslation
      * @return static
      */
-    private function createTranslation($localeId, $text, $parentId = NULL)
+    private function createTranslation($locale, $text, $parentTranslation = NULL)
     {
+        $parentId = NULL;
+
+        /*
+         * Check if auto translation is enabled, if so we'll run the text through google
+         * translate and save the text.
+         */
+        if($parentTranslation && $this->autoTranslateEnabled())
+        {
+            $googleTranslate = new GoogleTranslate;
+
+            $googleTranslate->setLangFrom($parentTranslation->locale->code);
+            $googleTranslate->setLangTo($locale->code);
+
+            $text = $googleTranslate->translate($text);
+
+            if($this->autoTranslateUcfirstEnabled())
+            {
+                $text = ucfirst($text);
+            }
+
+            $parentId = $parentTranslation->id;
+        }
+
         $translation = $this->translationModel->firstOrCreate(array(
-            'locale_id' => $localeId,
+            'locale_id' => $locale->id,
             'translation_id' => $parentId,
             'translation' => $text,
         ));
+
+
 
         return $translation;
     }
@@ -314,6 +342,26 @@ class Translation {
 
             throw new InvalidLocaleCode($message);
         }
+    }
+
+    /**
+     * Returns the auto translate configuration option
+     *
+     * @return mixed
+     */
+    private function autoTranslateEnabled()
+    {
+        return $this->config->get('translation::auto_translate');
+    }
+
+    /**
+     * Returns the auto translate ucfirst configuration option
+     *
+     * @return mixed
+     */
+    private function autoTranslateUcfirstEnabled()
+    {
+        return $this->config->get('translation::auto_translate_ucfirst');
     }
 
 }

@@ -1,6 +1,9 @@
 ![Translation Banner]
 (https://github.com/stevebauman/translation/blob/master/translation-banner.jpg)
 
+[![Code Climate](https://codeclimate.com/github/stevebauman/translation/badges/gpa.svg)](https://codeclimate.com/github/stevebauman/translation)
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stevebauman/translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stevebauman/translation/?branch=master)
+
 ##Description
 
 Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly

@@ -217,9 +217,9 @@ class Translation {
         $locale = $this->firstOrCreateLocale($this->getDefaultLocale());
 
         return $this->translationModel
+            ->remember(1)
             ->where('locale_id', $locale->id)
             ->where('translation', $text)
-            ->remember(1)
             ->first();
     }
 
@@ -266,18 +266,6 @@ class Translation {
             ->remember(1)
             ->where('locale_id', $localeId)
             ->where('translation_id', $parentId)->first();
-    }
-
-    /**
-     * Returns the translation record by the specified text
-     *
-     * @param string $text
-     * @return mixed
-     */
-    private function findTranslationByText($text = '')
-    {
-        return $this->translationModel
-            ->where('translation', $text)->first();
     }
 
     /**

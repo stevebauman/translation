@@ -1,7 +1,8 @@
 {
     "name": "stevebauman/translation",
-    "description": "An easy database driven translator for Laravel 4",
+    "description": "An easy database driven translator for Laravel 4 / 5",
     "tags": ["lang", "translation", "translate", "localization", "localize", "laravel"],
+    "license": "MIT",
     "authors": [
         {
             "name": "Steve Bauman",

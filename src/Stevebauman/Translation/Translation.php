@@ -123,7 +123,7 @@ class Translation {
     /**
      * Retrieves the current app's default locale
      *
-     * @return mixed
+     * @return string
      */
     public function getAppLocale()
     {
@@ -150,7 +150,9 @@ class Translation {
 
         if($locale)
         {
+
             return $locale;
+
         } else {
 
             /*
@@ -186,8 +188,8 @@ class Translation {
      * Returns the translation by the specified text and the applications
      * default locale
      *
-     * @param $text
-     * @return mixed
+     * @param string $text
+     * @return Translation
      */
     public function getDefaultTranslation($text)
     {
@@ -201,7 +203,7 @@ class Translation {
     /**
      * Retrieves or creates a locale from the specified code
      *
-     * @param $code
+     * @param string $code
      * @return static
      */
     private function firstOrCreateLocale($code)
@@ -232,9 +234,9 @@ class Translation {
     /**
      * Creates a translation
      *
-     * @param $locale
-     * @param $text
-     * @param null $parentTranslation
+     * @param Translation $locale
+     * @param string $text
+     * @param Translation $parentTranslation
      * @return static
      */
     private function createTranslation($locale, $text, $parentTranslation = NULL)

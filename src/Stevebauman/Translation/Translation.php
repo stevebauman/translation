@@ -224,20 +224,6 @@ class Translation {
     }
 
     /**
-     * Returns a locale by the specified code
-     *
-     * @param string $code
-     * @return mixed
-     */
-    private function findLocaleByCode($code = '')
-    {
-        return $this->localeModel
-            ->remember(1)
-            ->where('code', $code)
-            ->first();
-    }
-
-    /**
      * Retrieves or creates a locale from the specified code
      *
      * @param $code

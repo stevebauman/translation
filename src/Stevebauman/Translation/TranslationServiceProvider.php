@@ -16,6 +16,7 @@ class TranslationServiceProvider extends ServiceProvider {
 	/**
 	 * Register the service provider.
 	 *
+	 * @method void package(string $package, string $namespace, string $path)
 	 * @return void
 	 */
 	public function register()

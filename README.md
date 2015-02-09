@@ -3,6 +3,10 @@
 
 [![Code Climate](https://codeclimate.com/github/stevebauman/translation/badges/gpa.svg)](https://codeclimate.com/github/stevebauman/translation)
 [![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stevebauman/translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stevebauman/translation/?branch=master)
+[![Latest Stable Version](https://poser.pugx.org/stevebauman/translation/v/stable.svg)](https://packagist.org/packages/stevebauman/translation)
+[![Total Downloads](https://poser.pugx.org/stevebauman/translation/downloads.svg)](https://packagist.org/packages/stevebauman/translation)
+[![Latest Unstable Version](https://poser.pugx.org/stevebauman/translation/v/unstable.svg)](https://packagist.org/packages/stevebauman/translation)
+[![License](https://poser.pugx.org/stevebauman/translation/license.svg)](https://packagist.org/packages/stevebauman/translation)
 
 ##Description
 

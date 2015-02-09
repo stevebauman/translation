@@ -1,6 +1,57 @@
 ![Translation Banner]
 (https://github.com/stevebauman/translation/blob/master/translation-banner.jpg)
 
+##Description
+
+Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly
+on your application and have it automatically added to the database and translated at runtime? Take this for example:
+
+Controller:
+
+    public function index()
+    {
+        return view('home.index');
+    }
+
+View:
+
+    @extends('layout.default')
+    
+    {{ _t('Welcome to our home page') }}
+
+Seen:
+
+    Welcome to our home page
+
+When you visit the page, you won't notice anything different, but if you take a look at your database, your default
+application locale has already been created, and the translation attached to that locale.
+
+Now if we set locale to something different, such as French (fr), it'll automatically translate it for you.
+
+Controller:
+
+    public function index()
+    {
+        Translation::setLocale('fr');
+        
+        return view('home.index');
+    }
+    
+View:
+
+    @extends('layout.default')
+    
+    {{ _t('Welcome to our home page') }}
+
+Seen:
+
+    Bienvenue sur notre page d'accueil
+    
+Notice that we didn't actually change the text inside the view, which means everything stays completely readable in your
+locale to you (the developer!), which means no more text strings indicating what is actually there such as:
+
+    {{ trans('home.index.welcome') }}
+    
 ##Installation
 
 Require translation in your composer.json file

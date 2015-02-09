@@ -149,13 +149,13 @@ and add the translation in the database that has the format of:
 
 To perform the scan, use artisan like so:
 
-    php artisan translation:scan directory --locale="en"
+    php artisan translation:scan directory --locale="code"
 
 Specifying the directory is mandatory.
 
 For example, to scan your views directory, use:
 
-    php artisan translation:scan app/views
+    php artisan translation:scan app/views --locale="en"
    
 If you specify a locale, it will add all the translations for the app locale, as well as the specified locale.
 

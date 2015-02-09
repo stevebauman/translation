@@ -131,16 +131,20 @@ And this in your `locale_translations` table:
        1        1         NULL        'Translate me!'
        2        2          1          'Traduisez-moi !'
 
-You can now update the translation on the new record and it will be shown wherever `_t('Translate me!')` is called.
+You can now update the translation on the new record and it will be shown wherever:
 
-You must provide you're own way of updating translations (controllers/views etc).
+    _t('Translate me!')`
+    
+Is called.
+
+You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.
 
 ##Commands
 
 ####Scan
 
 The scan command accepts one argument (directory) and one option (locale). It will look through each file in the directory
-and add the translation in the database that has the format of:
+given and add the translation in the database that has the format of:
 
     _t('')
     _t("")

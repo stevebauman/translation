@@ -12,7 +12,7 @@ class CreateTranslationsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('translations', function (Blueprint $table) {
+		Schema::create('locale_translations', function (Blueprint $table) {
 
 			$table->increments('id');
 			$table->timestamps();
@@ -24,7 +24,7 @@ class CreateTranslationsTable extends Migration {
 				->onUpdate('restrict')
 				->onDelete('cascade');
 
-			$table->foreign('translation_id')->references('id')->on('translations')
+			$table->foreign('translation_id')->references('id')->on('locale_translations')
 				->onUpdate('restrict')
 				->onDelete('cascade');
 		});
@@ -37,7 +37,7 @@ class CreateTranslationsTable extends Migration {
 	 */
 	public function down()
 	{
-		Schema::dropIfExists('translations');
+		Schema::dropIfExists('locale_translations');
 	}
 
 }

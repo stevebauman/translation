@@ -2,8 +2,9 @@
 
 namespace Stevebauman\Translation;
 
+use Stevebauman\Translation\Exceptions\InvalidLocaleCode;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
-use Stevebauman\Translation\Models\Translation as TranslationModel;
+use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Session\SessionManager as Session;
 use Illuminate\Config\Repository as Config;
@@ -104,7 +105,6 @@ class Translation {
 
             if($translation)
             {
-
                 return $translation->translation;
 
             } else {
@@ -134,7 +134,7 @@ class Translation {
 
             $translation = $this->createTranslation($defaultLocale->id, $text);
 
-            return $this->translate($translation->translation);
+            return $translation->translation;
 
         }
 
@@ -211,12 +211,13 @@ class Translation {
      */
     public function getDefaultTranslation($text)
     {
-        $locale = $this->findLocaleByCode($this->getDefaultLocale());
+        $locale = $this->firstOrCreateLocale($this->getDefaultLocale());
 
         return $this->translationModel
-            ->remember(1)
             ->where('locale_id', $locale->id)
-            ->where('translation', $text)->first();
+            ->where('translation', $text)
+            ->remember(1)
+            ->first();
     }
 
     /**
@@ -229,7 +230,8 @@ class Translation {
     {
         return $this->localeModel
             ->remember(1)
-            ->where('code', $code)->first();
+            ->where('code', $code)
+            ->first();
     }
 
     /**
@@ -240,8 +242,11 @@ class Translation {
      */
     private function firstOrCreateLocale($code)
     {
+        $name = $this->getConfigLocaleByCode($code);
+
         return $this->localeModel->firstOrCreate(array(
             'code' => $code,
+            'name' => $name,
         ));
     }
 
@@ -254,7 +259,6 @@ class Translation {
      */
     private function findTranslationByLocaleIdAndParentId($localeId, $parentId)
     {
-
         return $this->translationModel
             ->remember(1)
             ->where('locale_id', $localeId)
@@ -290,6 +294,26 @@ class Translation {
         ));
 
         return $translation;
+    }
+
+    /**
+     * Returns a the english name of the locale code entered from the config file
+     *
+     * @param $code
+     * @return mixed
+     * @throws InvalidLocaleCode
+     */
+    private function getConfigLocaleByCode($code)
+    {
+        if(array_key_exists($code, $this->config->get('translation::locales')))
+        {
+            return $this->config->get('translation::locales')[$code];
+        } else
+        {
+            $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
+
+            throw new InvalidLocaleCode($message);
+        }
     }
 
 }

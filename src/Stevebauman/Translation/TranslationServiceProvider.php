@@ -1,6 +1,6 @@
 <?php namespace Stevebauman\Translation;
 
-use Stevebauman\Translation\Models\Translation as TranslationModel;
+use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Illuminate\Support\ServiceProvider;
 
@@ -22,15 +22,26 @@ class TranslationServiceProvider extends ServiceProvider {
 	{
 		$this->package('stevebauman/translation');
 
+		/*
+		 * Construct a new Translation instance and inject the application config, session, and cache.
+		 *
+		 * Also passing in new instances of the locale model and translation model for automatic record creation
+		 */
 		$this->app['translation'] = $this->app->share(function($app)
 		{
 			return new Translation($app['config'], $app['session'], $app['cache'], new LocaleModel, new TranslationModel);
 		});
 
-		$this->app->bind('translation:scan', function(){
-			return new Commands\ScanCommand();
+		/*
+		 * Bind the translation scan command for artisan
+		 */
+		$this->app->bind('translation:scan', function($app){
+			return new Commands\ScanCommand($app['translation']);
 		});
 
+		/*
+		 * Register the commands
+		 */
 		$this->commands(array(
 			'translation:scan',
 		));

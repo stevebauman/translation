@@ -8,9 +8,9 @@ use Illuminate\Database\Eloquent\Model;
  * Class Translation
  * @package Stevebauman\Translation\Models
  */
-class Translation extends Model {
+class LocaleTranslation extends Model {
 
-    protected $table = 'translations';
+    protected $table = 'locale_translations';
 
     protected $fillable = array(
         'locale_id',
@@ -35,7 +35,7 @@ class Translation extends Model {
      */
     public function parent()
     {
-        return $this->belongsTo('Stevebauman\Translation\Models\Translation', 'translation_id');
+        return $this->belongsTo('Stevebauman\Translation\Models\LocaleTranslation', 'translation_id');
     }
 
 }

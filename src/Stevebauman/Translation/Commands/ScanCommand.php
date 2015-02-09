@@ -3,8 +3,10 @@
 namespace Stevebauman\Translation\Commands;
 
 use Stevebauman\Translation\Exceptions\Commands\DirectoryNotFoundException;
+use Stevebauman\Translation\Translation;
 use Symfony\Component\Console\Input\InputArgument;
 use Illuminate\Console\Command;
+use Symfony\Component\Console\Input\InputOption;
 
 /**
  * Class ScanCommand
@@ -27,11 +29,16 @@ class ScanCommand extends Command {
     protected $description = 'Scans the specified directory for translations';
 
     /**
-     * The current
-     *
-     * @var string
+     * @var Translation
      */
-    private $scanDir = '';
+    private $translator;
+
+    public function __construct(Translation $translation)
+    {
+        $this->translator = $translation;
+
+        parent::__construct();
+    }
 
     /**
      * Execute the console command.
@@ -42,14 +49,24 @@ class ScanCommand extends Command {
     {
         $directory = base_path($this->argument('directory'));
 
+        $locale = $this->option('locale');
+
+        if($locale)
+        {
+            $this->translator->setLocale($locale);
+        }
+
         $this->line('Checking directory...');
 
         $this->verifyDirectory($directory);
 
         $this->line('Scanning specified directory...');
 
-        $this->scanDirectory($directory);
+        $added = $this->scanDirectory($directory);
 
+        $message = sprintf('Successfully found: %s translations', $added);
+
+        $this->info($message);
     }
 
     /**
@@ -60,9 +77,14 @@ class ScanCommand extends Command {
     protected function getArguments()
     {
         return array(
-            array(
-                'directory', InputArgument::REQUIRED, 'Directory of files to scan'
-            )
+            array('directory', InputArgument::REQUIRED, 'The directory to search for translations in')
+        );
+    }
+
+    protected function getOptions()
+    {
+        return array(
+            array('locale', null, InputOption::VALUE_REQUIRED, 'The locale to generate the translations for')
         );
     }
 
@@ -90,33 +112,45 @@ class ScanCommand extends Command {
 
     private function scanDirectory($directory)
     {
-        $results = $this->dirToArray($directory);
+        $files = $this->dirToArray($directory);
 
-        $this->processScan($results);
+        $results = $this->processScan($files);
+
+        foreach($results as $translation)
+        {
+            $this->translator->translate($translation);
+        }
+
+        return count($results);
     }
 
     /**
      * Processes the scan command
      *
-     * @param $array
+     * @param array $files
      * @return mixed
      */
-    private function processScan($array)
+    private function processScan($files = array())
     {
-        foreach($array as $file)
+        $messages = array();
+
+        foreach($files as $file)
         {
+
             if(is_array($file)) {
 
-                return $this->processScan($file);
+                $messages[] = $this->processScan($file);
 
             } else {
 
                 $content = file_get_contents($file);
 
-                $messages = $this->parseContent($content);
+                $messages[] = $this->parseContent($content);
 
             }
         }
+
+       return array_flatten(array_filter($messages));
     }
 
     /**
@@ -129,32 +163,33 @@ class ScanCommand extends Command {
     private function parseContent($content)
     {
         $messages = [];
+
         /*
-         * Regex used:
-         *
-         * {{'AJAX framework'|_}}
-         * {{\s*'([^'])+'\s*[|]\s*_\s*}}
-         *
-         * {{'AJAX framework'|_(variables)}}
-         * {{\s*'([^'])+'\s*[|]\s*_\s*\([^\)]+\)\s*}}
-         *
-         * {{ _t('Translation Text') }}
-         * {{\s*_t[^\(]*([^'])+'[^\(]*\s*}}
+         * Regex: _t(\'(.*?)\')
+         * Matches: _t('Test')
          */
-        $quoteChar = preg_quote("'");
-
-
-        preg_match_all('#{{\s*'.$quoteChar.'([^'.$quoteChar.']+)'.$quoteChar.'\s*[|]\s*_\s*}}#', $content, $match);
+        preg_match_all("#_t\(\'(.*?)\'\)#", $content, $match);
         if (isset($match[1])) $messages = array_merge($messages, $match[1]);
 
-        preg_match_all('#{{\s*'.$quoteChar.'([^'.$quoteChar.']+)'.$quoteChar.'\s*[|]\s*_\s*\([^\)]+\)\s*}}#', $content, $match);
+        /*
+         * Regex: _t(\"(.*?)\")
+         * Matches: _t("Test")
+         */
+        preg_match_all('#_t\(\"(.*?)\"\)#', $content, $match);
         if (isset($match[1])) $messages = array_merge($messages, $match[1]);
 
-        $quoteChar = preg_quote('"');
-        preg_match_all('#{{\s*'.$quoteChar.'([^'.$quoteChar.']+)'.$quoteChar.'\s*[|]\s*_\s*}}#', $content, $match);
+        /*
+         * Regex: Translation::translate(\'(.*?)\')
+         * Matches: Translation::translate('Test')
+         */
+        preg_match_all('#Translation::translate\(\'(.*?)\'\)#', $content, $match);
         if (isset($match[1])) $messages = array_merge($messages, $match[1]);
 
-        preg_match_all('#{{\s*'.$quoteChar.'([^'.$quoteChar.']+)'.$quoteChar.'\s*[|]\s*_\s*\([^\)]+\)\s*}}#', $content, $match);
+        /*
+         * Regex: Translation::translate(\'(.*?)\')
+         * Matches: Translation::translate("Test")
+         */
+        preg_match_all('#Translation::translate\(\"(.*?)\"\)#', $content, $match);
         if (isset($match[1])) $messages = array_merge($messages, $match[1]);
 
         return $messages;
@@ -166,28 +201,23 @@ class ScanCommand extends Command {
      * @param $dir
      * @return array
      */
-    private function dirToArray($dir) {
+    private function dirToArray($dir)
+    {
 
         $result = array();
 
         $cdir = scandir($dir);
 
-        foreach ($cdir as $key => $value)
-        {
-            if (!in_array($value,array(".","..",".gitignore","composer.json")))
-            {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
-                {
+        foreach ($cdir as $key => $value) {
+            if (!in_array($value, array(".", ".."))) {
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
                     $result[$value] = $this->dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-                }
-                else
-                {
-                    $result[] = $dir .  DIRECTORY_SEPARATOR . $value;
+                } else {
+                    $result[] = $dir . DIRECTORY_SEPARATOR . $value;
                 }
             }
         }
 
         return $result;
     }
-
 }

@@ -85,7 +85,6 @@ Your good to go!
 
 ##TO-DO
 
-* Caching (underway)
 * Tests
 
 ##Usage

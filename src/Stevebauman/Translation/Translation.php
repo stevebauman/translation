@@ -59,6 +59,27 @@ class Translation {
     protected $config;
 
     /**
+     * The sprintf format to retrieve a translation from the cache
+     *
+     * @var string
+     */
+    private $cacheTranslationStr = 'translation::%s.%s';
+
+    /**
+     * The sprintf format to retrieve a translation from the cache
+     *
+     * @var string
+     */
+    private $cacheLocaleStr = 'translation::%s';
+
+    /**
+     * The amount of time (minutes) to store the cached translations
+     *
+     * @var int
+     */
+    private $cacheTime = 30;
+
+    /**
      * @param Config $config
      * @param Session $session
      * @param Cache $cache
@@ -110,7 +131,7 @@ class Translation {
              */
             if($defaultTranslation->locale_id != $toLocale->id) {
 
-                $translation = $this->createTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
+                $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
                 return $translation->translation;
 
@@ -195,9 +216,7 @@ class Translation {
     {
         $locale = $this->firstOrCreateLocale($this->getDefaultLocale());
 
-        $translation = $this->createTranslation($locale, $text);
-
-        return $translation;
+        return $this->firstOrCreateTranslation($locale, $text);
     }
 
     /**
@@ -208,12 +227,20 @@ class Translation {
      */
     private function firstOrCreateLocale($code)
     {
+        $cachedLocale = $this->getCacheLocale($code);
+
+        if($cachedLocale) return $cachedLocale;
+
         $name = $this->getConfigLocaleByCode($code);
 
-        return $this->localeModel->firstOrCreate(array(
+        $locale = $this->localeModel->firstOrCreate(array(
             'code' => $code,
             'name' => $name,
         ));
+
+        $this->setCacheLocale($locale);
+
+        return $locale;
     }
 
     /**
@@ -239,9 +266,18 @@ class Translation {
      * @param Translation $parentTranslation
      * @return static
      */
-    private function createTranslation($locale, $text, $parentTranslation = NULL)
+    private function firstOrCreateTranslation($locale, $text, $parentTranslation = NULL)
     {
-        $parentId = NULL;
+        /*
+         * We'll check to see if there's a cached translation first before we try
+         * and hit the database
+         */
+        $cachedTranslation = $this->getCacheTranslation($locale, $text);
+
+        if($cachedTranslation)
+        {
+            return $cachedTranslation;
+        }
 
         /*
          * Check if auto translation is enabled, if so we'll run the text through google
@@ -266,13 +302,106 @@ class Translation {
 
         $translation = $this->translationModel->firstOrCreate(array(
             'locale_id' => $locale->id,
-            'translation_id' => $parentId,
+            'translation_id' => (isset($parentTranslation) ? $parentTranslation->id  : NULL),
             'translation' => $text,
         ));
 
-
+        /*
+         * Cache the translation so it's retrieved faster next time
+         */
+        $this->setCacheTranslation($translation);
 
         return $translation;
+    }
+
+    /**
+     * Sets a cache key to the specified locale and text
+     *
+     * @param $translation
+     */
+    private function setCacheTranslation($translation)
+    {
+        $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
+
+        if(!$this->cache->has($id))
+        {
+            $this->cache->put($id, $translation, $this->cacheTime);
+        }
+    }
+
+    /**
+     * Retrieves the cached translation from the specified locale
+     * and text
+     *
+     * @param $locale
+     * @param $text
+     * @return bool|string
+     */
+    private function getCacheTranslation($locale, $text)
+    {
+        $id = $this->getTranslationCacheId($locale, $text);
+
+        $cachedTranslation = $this->cache->get($id);
+
+        if($cachedTranslation)
+        {
+            return $cachedTranslation;
+
+        } else {
+
+            return false;
+        }
+    }
+
+    /**
+     * Sets a cache key to the specified locale
+     *
+     * @param $locale
+     */
+    private function setCacheLocale($locale)
+    {
+        if(!$this->cache->has($locale->code))
+        {
+            $id = sprintf($this->cacheLocaleStr, $locale->code);
+
+            $this->cache->put($id, $locale, $this->cacheTime);
+        }
+    }
+
+    /**
+     * Retrieves a cached locale from the specified locale code
+     *
+     * @param $code
+     * @return bool
+     */
+    private function getCacheLocale($code)
+    {
+        $id = sprintf($this->cacheLocaleStr, $code);
+
+        $cachedLocale = $this->cache->get($id);
+
+        if($cachedLocale)
+        {
+            return $cachedLocale;
+        } else
+        {
+            return false;
+        }
+    }
+
+    /**
+     * Returns a unique translation code by compressing the text
+     * using a PHP compression function
+     *
+     * @param $locale
+     * @param $text
+     * @return string
+     */
+    private function getTranslationCacheId($locale, $text)
+    {
+        $compressed = $this->compressString($text);
+
+        return sprintf($this->cacheTranslationStr, $locale->code, $compressed);
     }
 
     /**
@@ -313,6 +442,17 @@ class Translation {
     private function autoTranslateUcfirstEnabled()
     {
         return $this->config->get('translation::auto_translate_ucfirst');
+    }
+
+    /**
+     * Compresses a string. Used for storing cache keys for translations
+     *
+     * @param $string
+     * @return string
+     */
+    private function compressString($string)
+    {
+        return gzcompress($string);
     }
 
 }

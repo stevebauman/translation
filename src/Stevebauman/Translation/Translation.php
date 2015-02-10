@@ -14,7 +14,8 @@ use Illuminate\Config\Repository as Config;
  * Class Translation
  * @package Stevebauman\Translation
  */
-class Translation {
+class Translation
+{
 
     /**
      * Holds the default application locale
@@ -125,8 +126,7 @@ class Translation {
 
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
 
-        if($translation)
-        {
+        if ($translation) {
 
             return $translation->translation;
 
@@ -137,7 +137,7 @@ class Translation {
              * we'll create a new translation record with the default
              * translation text and return the default translation text
              */
-            if($defaultTranslation->locale_id != $toLocale->id) {
+            if ($defaultTranslation->locale_id != $toLocale->id) {
 
                 $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
@@ -177,8 +177,7 @@ class Translation {
     {
         $locale = $this->session->get('locale');
 
-        if($locale)
-        {
+        if ($locale) {
 
             return $locale;
 
@@ -237,7 +236,7 @@ class Translation {
     {
         $cachedLocale = $this->getCacheLocale($code);
 
-        if($cachedLocale) return $cachedLocale;
+        if ($cachedLocale) return $cachedLocale;
 
         $name = $this->getConfigLocaleByCode($code);
 
@@ -261,7 +260,6 @@ class Translation {
     private function findTranslationByLocaleIdAndParentId($localeId, $parentId)
     {
         return $this->translationModel
-            ->remember(1)
             ->where('locale_id', $localeId)
             ->where('translation_id', $parentId)->first();
     }
@@ -282,14 +280,13 @@ class Translation {
          */
         $cachedTranslation = $this->getCacheTranslation($locale, $text);
 
-        if($cachedTranslation) return $cachedTranslation;
+        if ($cachedTranslation) return $cachedTranslation;
 
         /*
          * Check if auto translation is enabled, if so we'll run the text through google
          * translate and save the text.
          */
-        if($parentTranslation && $this->autoTranslateEnabled())
-        {
+        if ($parentTranslation && $this->autoTranslateEnabled()) {
             $googleTranslate = new GoogleTranslate;
 
             $googleTranslate->setLangFrom($parentTranslation->locale->code);
@@ -297,8 +294,7 @@ class Translation {
 
             $text = $googleTranslate->translate($text);
 
-            if($this->autoTranslateUcfirstEnabled())
-            {
+            if ($this->autoTranslateUcfirstEnabled()) {
                 $text = ucfirst($text);
             }
 
@@ -306,7 +302,7 @@ class Translation {
 
         $translation = $this->translationModel->firstOrCreate(array(
             'locale_id' => $locale->id,
-            'translation_id' => (isset($parentTranslation) ? $parentTranslation->id  : NULL),
+            'translation_id' => (isset($parentTranslation) ? $parentTranslation->id : NULL),
             'translation' => $text,
         ));
 
@@ -327,8 +323,7 @@ class Translation {
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
-        if(!$this->cache->has($id))
-        {
+        if (!$this->cache->has($id)) {
             $this->cache->put($id, $translation, $this->cacheTime);
         }
     }
@@ -347,8 +342,7 @@ class Translation {
 
         $cachedTranslation = $this->cache->get($id);
 
-        if($cachedTranslation)
-        {
+        if ($cachedTranslation) {
             return $cachedTranslation;
 
         } else {
@@ -364,8 +358,7 @@ class Translation {
      */
     private function setCacheLocale($locale)
     {
-        if(!$this->cache->has($locale->code))
-        {
+        if (!$this->cache->has($locale->code)) {
             $id = sprintf($this->cacheLocaleStr, $locale->code);
 
             $this->cache->put($id, $locale, $this->cacheTime);
@@ -384,11 +377,9 @@ class Translation {
 
         $cachedLocale = $this->cache->get($id);
 
-        if($cachedLocale)
-        {
+        if ($cachedLocale) {
             return $cachedLocale;
-        } else
-        {
+        } else {
             return false;
         }
     }
@@ -417,11 +408,9 @@ class Translation {
      */
     private function getConfigLocaleByCode($code)
     {
-        if(array_key_exists($code, $this->config->get('translation::locales')))
-        {
+        if (array_key_exists($code, $this->config->get('translation::locales'))) {
             return $this->config->get('translation::locales')[$code];
-        } else
-        {
+        } else {
             $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
 
             throw new InvalidLocaleCode($message);
@@ -435,8 +424,7 @@ class Translation {
      */
     private function setCacheTime($time)
     {
-        if(is_numeric($time))
-        {
+        if (is_numeric($time)) {
             $this->cacheTime = $time;
         }
     }

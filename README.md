@@ -2,7 +2,7 @@
 (https://github.com/stevebauman/translation/blob/master/translation-banner.jpg)
 
 [![Code Climate](https://codeclimate.com/github/stevebauman/translation/badges/gpa.svg)](https://codeclimate.com/github/stevebauman/translation)
-[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stevebauman/translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stevebauman/translation/?branch=master)4
+[![Scrutinizer Code Quality](https://scrutinizer-ci.com/g/stevebauman/translation/badges/quality-score.png?b=master)](https://scrutinizer-ci.com/g/stevebauman/translation/?branch=master)
 [![Build Status](https://scrutinizer-ci.com/g/stevebauman/translation/badges/build.png?b=master)](https://scrutinizer-ci.com/g/stevebauman/translation/build-status/master)
 [![Latest Stable Version](https://poser.pugx.org/stevebauman/translation/v/stable.svg)](https://packagist.org/packages/stevebauman/translation)
 [![Total Downloads](https://poser.pugx.org/stevebauman/translation/downloads.svg)](https://packagist.org/packages/stevebauman/translation)

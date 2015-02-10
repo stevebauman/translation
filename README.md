@@ -9,11 +9,6 @@
 [![Latest Unstable Version](https://poser.pugx.org/stevebauman/translation/v/unstable.svg)](https://packagist.org/packages/stevebauman/translation)
 [![License](https://poser.pugx.org/stevebauman/translation/license.svg)](https://packagist.org/packages/stevebauman/translation)
 
-##To Do
-
-* Placeholder functionality (ex. `Welcome, :name`)
-* Tests
-
 ##Description
 
 Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly

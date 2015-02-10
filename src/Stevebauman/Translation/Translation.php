@@ -100,7 +100,15 @@ class Translation {
         $this->localeModel = $localeModel;
         $this->translationModel = $translationModel;
 
+        /*
+         * Set the default locale to the current application locale
+         */
         $this->setDefaultLocale($this->getAppLocale());
+
+        /*
+         * Set the cache time from the configuration
+         */
+        $this->setCacheTime($this->getConfigCacheTime());
     }
 
     /**
@@ -274,10 +282,7 @@ class Translation {
          */
         $cachedTranslation = $this->getCacheTranslation($locale, $text);
 
-        if($cachedTranslation)
-        {
-            return $cachedTranslation;
-        }
+        if($cachedTranslation) return $cachedTranslation;
 
         /*
          * Check if auto translation is enabled, if so we'll run the text through google
@@ -297,7 +302,6 @@ class Translation {
                 $text = ucfirst($text);
             }
 
-            $parentId = $parentTranslation->id;
         }
 
         $translation = $this->translationModel->firstOrCreate(array(
@@ -422,6 +426,29 @@ class Translation {
 
             throw new InvalidLocaleCode($message);
         }
+    }
+
+    /**
+     * Sets the time to store the translations and locales in cache
+     *
+     * @param $time
+     */
+    private function setCacheTime($time)
+    {
+        if(is_numeric($time))
+        {
+            $this->cacheTime = $time;
+        }
+    }
+
+    /**
+     * Returns the cache time set from the configuration file
+     *
+     * @return string|int
+     */
+    private function getConfigCacheTime()
+    {
+        return $this->config->get('translation::cache_time');
     }
 
     /**

@@ -31,6 +31,13 @@ return array(
     'auto_translate_ucfirst' => true,
 
     /*
+     * The amount of minutes to store the translations / locales in cache
+     *
+     * Default is 30 minutes
+     */
+    'cache_time' => 30,
+
+    /*
      * The locales array for converting a locale code into the english language name
      *
      * Must be array

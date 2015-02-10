@@ -33,6 +33,9 @@ class ScanCommand extends Command {
      */
     private $translator;
 
+    /**
+     * @param Translation $translation
+     */
     public function __construct(Translation $translation)
     {
         $this->translator = $translation;
@@ -51,10 +54,7 @@ class ScanCommand extends Command {
 
         $locale = $this->option('locale');
 
-        if($locale)
-        {
-            $this->translator->setLocale($locale);
-        }
+        if($locale) $this->translator->setLocale($locale);
 
         $this->line('Checking directory...');
 
@@ -214,16 +214,19 @@ class ScanCommand extends Command {
      */
     private function dirToArray($dir)
     {
-
         $result = array();
 
         $cdir = scandir($dir);
 
-        foreach ($cdir as $key => $value) {
-            if (!in_array($value, array(".", ".."))) {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $value)) {
+        foreach ($cdir as $key => $value)
+        {
+            if (!in_array($value, array(".", "..")))
+            {
+                if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
+                {
                     $result[$value] = $this->dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-                } else {
+                } else
+                {
                     $result[] = $dir . DIRECTORY_SEPARATOR . $value;
                 }
             }

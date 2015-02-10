@@ -195,3 +195,8 @@ And modifying it to:
     {{ _t('Welcome') }}
 
 Would automatically generate a new translation record.
+
+####Is there a maximum amount of text that can be auto-translated?
+
+Yes, according to [Google Translate PHP](https://github.com/Stichoza/google-translate-php/issues/8) there is a 1300 word
+limit <b>per request</b>. Just be sure to break you're content up so you don't hit the limit.

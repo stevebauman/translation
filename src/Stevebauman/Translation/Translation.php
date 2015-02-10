@@ -73,9 +73,9 @@ class Translation {
     private $cacheLocaleStr = 'translation::%s';
 
     /**
-     * The amount of time (minutes) to store the cached translations
+     * The amount of time (in minutes) to store the cached translations
      *
-     * @var int
+     * @var int|string|double
      */
     private $cacheTime = 30;
 

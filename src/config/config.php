@@ -16,7 +16,7 @@ return array(
     /**
      * Automatically translates text inserted by using google translate.
      *
-     * !! Limit of 1300 Characters per request !!
+     * !! Limit of 1300 Words per request !!
      *
      * Must be boolean
      */
@@ -31,9 +31,9 @@ return array(
     'auto_translate_ucfirst' => true,
 
     /*
-     * The amount of minutes to store the translations / locales in cache
+     * The amount of minutes to store the translations / locales in cache, default is 30 minutes
      *
-     * Default is 30 minutes
+     * Must be int|string
      */
     'cache_time' => 30,
 

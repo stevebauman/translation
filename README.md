@@ -55,9 +55,10 @@ Seen:
     Bienvenue sur notre page d'accueil
     
 Notice that we didn't actually change the text inside the view, which means everything stays completely readable in your
-locale to you (the developer!), which means no more text strings trying to figure out what is actually displayed there:
+locale to you (the developer!), which means no more trying to decipher what text may be inside that dot-notated translation
+path:
 
-    {{ trans('home.index.welcome') }}
+    {{ trans('page.home.index.welcome') }}
     
 ##Installation
 
@@ -82,10 +83,6 @@ Run the migrations
     php artisan migrate --package="stevebauman/translation"
     
 Your good to go!
-
-##TO-DO
-
-* Tests
 
 ##Usage
 
@@ -169,3 +166,25 @@ If you specify a locale, it will add all the translations for the app locale, as
 
 For example if your default app locale was 'en', and you supply 'fr' to the locale option, it will generate the translation records
 for both locales.
+
+##Questions / Concerns
+
+####Will my translations be erased / modified if I run the scan command?
+
+No. No translations are ever removed or updated from the scan command. Translations are only added. You will have to manage
+translations that are no longer in use. This may be changed in the future.
+
+####If I update / modify the text inside the translation function, what happens to it's translations?
+
+If you modify the text inside a translation function, it will create a new record and you will need to translate it again.
+This is intended because it could be a completely different translation after modification.
+
+For example using:
+
+    {{ _t('Welcome!') }}
+    
+And modifying it to:
+
+    {{ _t('Welcome') }}
+
+Would automatically generate a new translation record.

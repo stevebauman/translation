@@ -9,13 +9,13 @@ use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
 use Illuminate\Cache\CacheManager as Cache;
 use Illuminate\Session\SessionManager as Session;
 use Illuminate\Config\Repository as Config;
+use Illuminate\Foundation\Application as App;
 
 /**
  * Class Translation
  * @package Stevebauman\Translation
  */
-class Translation
-{
+class Translation {
 
     /**
      * Holds the default application locale
@@ -39,6 +39,13 @@ class Translation
     protected $translationModel;
 
     /**
+     * Holds the current application instance
+     *
+     * @var App
+     */
+    protected $app;
+
+    /**
      * Holds the current cache instance
      *
      * @var Cache
@@ -60,6 +67,14 @@ class Translation
     protected $config;
 
     /**
+     * Holds the separator to access config values.
+     * This is for Laravel 4 / 5 compatibility
+     *
+     * @var string
+     */
+    private $configSeparator = '::';
+
+    /**
      * The sprintf format to retrieve a translation from the cache
      *
      * @var string
@@ -74,9 +89,9 @@ class Translation
     private $cacheLocaleStr = 'translation::%s';
 
     /**
-     * The amount of time (in minutes) to store the cached translations
+     * The amount of time (minutes) to store the cached translations
      *
-     * @var int|string|double
+     * @var int
      */
     private $cacheTime = 30;
 
@@ -88,12 +103,14 @@ class Translation
      * @param TranslationModel $translationModel
      */
     public function __construct(
+        App $app,
         Config $config,
         Session $session,
         Cache $cache,
         LocaleModel $localeModel,
         TranslationModel $translationModel)
     {
+        $this->app = $app;
         $this->config = $config;
         $this->session = $session;
         $this->cache = $cache;
@@ -110,6 +127,12 @@ class Translation
          * Set the cache time from the configuration
          */
         $this->setCacheTime($this->getConfigCacheTime());
+
+        /*
+         * Set the configuration separator for compatibility with
+         * Laravel 4 / 5
+         */
+        $this->setConfigSeparator();
     }
 
     /**
@@ -126,7 +149,8 @@ class Translation
 
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
 
-        if ($translation) {
+        if($translation)
+        {
 
             return $translation->translation;
 
@@ -137,7 +161,7 @@ class Translation
              * we'll create a new translation record with the default
              * translation text and return the default translation text
              */
-            if ($defaultTranslation->locale_id != $toLocale->id) {
+            if($defaultTranslation->locale_id != $toLocale->id) {
 
                 $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
@@ -177,7 +201,8 @@ class Translation
     {
         $locale = $this->session->get('locale');
 
-        if ($locale) {
+        if($locale)
+        {
 
             return $locale;
 
@@ -236,7 +261,7 @@ class Translation
     {
         $cachedLocale = $this->getCacheLocale($code);
 
-        if ($cachedLocale) return $cachedLocale;
+        if($cachedLocale) return $cachedLocale;
 
         $name = $this->getConfigLocaleByCode($code);
 
@@ -280,13 +305,14 @@ class Translation
          */
         $cachedTranslation = $this->getCacheTranslation($locale, $text);
 
-        if ($cachedTranslation) return $cachedTranslation;
+        if($cachedTranslation) return $cachedTranslation;
 
         /*
          * Check if auto translation is enabled, if so we'll run the text through google
          * translate and save the text.
          */
-        if ($parentTranslation && $this->autoTranslateEnabled()) {
+        if($parentTranslation && $this->autoTranslateEnabled())
+        {
             $googleTranslate = new GoogleTranslate;
 
             $googleTranslate->setLangFrom($parentTranslation->locale->code);
@@ -294,7 +320,8 @@ class Translation
 
             $text = $googleTranslate->translate($text);
 
-            if ($this->autoTranslateUcfirstEnabled()) {
+            if($this->autoTranslateUcfirstEnabled())
+            {
                 $text = ucfirst($text);
             }
 
@@ -302,7 +329,7 @@ class Translation
 
         $translation = $this->translationModel->firstOrCreate(array(
             'locale_id' => $locale->id,
-            'translation_id' => (isset($parentTranslation) ? $parentTranslation->id : NULL),
+            'translation_id' => (isset($parentTranslation) ? $parentTranslation->id  : NULL),
             'translation' => $text,
         ));
 
@@ -323,7 +350,8 @@ class Translation
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
-        if (!$this->cache->has($id)) {
+        if(!$this->cache->has($id))
+        {
             $this->cache->put($id, $translation, $this->cacheTime);
         }
     }
@@ -342,7 +370,8 @@ class Translation
 
         $cachedTranslation = $this->cache->get($id);
 
-        if ($cachedTranslation) {
+        if($cachedTranslation)
+        {
             return $cachedTranslation;
 
         } else {
@@ -358,7 +387,8 @@ class Translation
      */
     private function setCacheLocale($locale)
     {
-        if (!$this->cache->has($locale->code)) {
+        if(!$this->cache->has($locale->code))
+        {
             $id = sprintf($this->cacheLocaleStr, $locale->code);
 
             $this->cache->put($id, $locale, $this->cacheTime);
@@ -377,9 +407,11 @@ class Translation
 
         $cachedLocale = $this->cache->get($id);
 
-        if ($cachedLocale) {
+        if($cachedLocale)
+        {
             return $cachedLocale;
-        } else {
+        } else
+        {
             return false;
         }
     }
@@ -408,9 +440,13 @@ class Translation
      */
     private function getConfigLocaleByCode($code)
     {
-        if (array_key_exists($code, $this->config->get('translation::locales'))) {
-            return $this->config->get('translation::locales')[$code];
-        } else {
+        $locales = $this->getConfigLocales();
+
+        if(array_key_exists($code, $locales))
+        {
+            return $locales[$code];
+        } else
+        {
             $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
 
             throw new InvalidLocaleCode($message);
@@ -424,9 +460,20 @@ class Translation
      */
     private function setCacheTime($time)
     {
-        if (is_numeric($time)) {
+        if(is_numeric($time))
+        {
             $this->cacheTime = $time;
         }
+    }
+
+    /**
+     * Returns the array of configuration locales
+     *
+     * @return mixed
+     */
+    private function getConfigLocales()
+    {
+        return $this->config->get('translation'. $this->configSeparator .'locales');
     }
 
     /**
@@ -436,7 +483,7 @@ class Translation
      */
     private function getConfigCacheTime()
     {
-        return $this->config->get('translation::cache_time');
+        return $this->config->get('translation:'. $this->configSeparator .'cache_time');
     }
 
     /**
@@ -446,7 +493,7 @@ class Translation
      */
     private function autoTranslateEnabled()
     {
-        return $this->config->get('translation::auto_translate');
+        return $this->config->get('translation'. $this->configSeparator .'auto_translate');
     }
 
     /**
@@ -456,7 +503,7 @@ class Translation
      */
     private function autoTranslateUcfirstEnabled()
     {
-        return $this->config->get('translation::auto_translate_ucfirst');
+        return $this->config->get('translation'. $this->configSeparator .'auto_translate_ucfirst');
     }
 
     /**
@@ -468,6 +515,26 @@ class Translation
     private function compressString($string)
     {
         return gzcompress($string);
+    }
+
+    /**
+     * Sets the configuration separator for Laravel 5 compatibility
+     */
+    private function setConfigSeparator()
+    {
+        /*
+         * Need to store app instance in new variable due to
+         * constants being inaccessible via $this->app::VERSION
+         */
+        $app = $this->app;
+
+        $appVersion = explode('.', $app::VERSION);
+
+        if($appVersion[0] == 5) {
+
+            $this->configSeparator = '.';
+
+        }
     }
 
 }

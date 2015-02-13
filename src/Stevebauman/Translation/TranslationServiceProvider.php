@@ -21,7 +21,24 @@ class TranslationServiceProvider extends ServiceProvider {
 	 */
 	public function register()
 	{
-		$this->package('stevebauman/translation');
+		/*
+		 * If the package method exists, we're using Laravel 4, if not then we're
+		 * definitely on laravel 5
+		 */
+		if (method_exists($this, 'package')) {
+
+			$this->package('stevebauman/translation');
+
+		} else {
+
+			$this->publishes([
+				__DIR__ . '/../../config/config.php' => config_path('translation.php'),
+			], 'config');
+
+			$this->publishes([
+				__DIR__ . '/../../migrations/' => base_path('/database/migrations'),
+			], 'migrations');
+		}
 
 		/*
 		 * Construct a new Translation instance and inject the application config, session, and cache.
@@ -30,7 +47,7 @@ class TranslationServiceProvider extends ServiceProvider {
 		 */
 		$this->app['translation'] = $this->app->share(function($app)
 		{
-			return new Translation($app['config'], $app['session'], $app['cache'], new LocaleModel, new TranslationModel);
+			return new Translation($app, $app['config'], $app['session'], $app['cache'], new LocaleModel, new TranslationModel);
 		});
 
 		/*

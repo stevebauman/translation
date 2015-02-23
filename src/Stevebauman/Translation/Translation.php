@@ -140,6 +140,7 @@ class Translation {
      *
      * @param string $text
      * @param array $data
+     * @return string
      */
     public function translate($text = '', $data = array())
     {
@@ -185,6 +186,8 @@ class Translation {
 
     /**
      * Retrieves the default locale property
+     *
+     * @return string
      */
     public function getDefaultLocale()
     {
@@ -384,6 +387,7 @@ class Translation {
      * Sets a cache key to the specified locale
      *
      * @param $locale
+     * @return void
      */
     private function setCacheLocale($locale)
     {
@@ -457,6 +461,7 @@ class Translation {
      * Sets the time to store the translations and locales in cache
      *
      * @param $time
+     * @return void
      */
     private function setCacheTime($time)
     {
@@ -469,7 +474,7 @@ class Translation {
     /**
      * Returns the array of configuration locales
      *
-     * @return mixed
+     * @return array
      */
     private function getConfigLocales()
     {
@@ -489,7 +494,7 @@ class Translation {
     /**
      * Returns the auto translate configuration option
      *
-     * @return mixed
+     * @return bool
      */
     private function autoTranslateEnabled()
     {
@@ -499,7 +504,7 @@ class Translation {
     /**
      * Returns the auto translate ucfirst configuration option
      *
-     * @return mixed
+     * @return bool
      */
     private function autoTranslateUcfirstEnabled()
     {
@@ -519,6 +524,8 @@ class Translation {
 
     /**
      * Sets the configuration separator for Laravel 5 compatibility
+     *
+     * @return void
      */
     private function setConfigSeparator()
     {

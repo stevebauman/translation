@@ -231,13 +231,15 @@ class Translation {
     }
 
     /**
-     * Sets the current locale in the session
+     * Sets the current locale in the session as well as the application
      *
      * @param string $code
      */
     public function setLocale($code = '')
     {
         $this->session->set('locale', $code);
+
+        $this->app->setLocale($code);
     }
 
     /**

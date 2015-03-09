@@ -150,28 +150,24 @@ class Translation {
 
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
 
-        if($translation)
+        /*
+         * A translation was found, let's return it
+         */
+        if($translation) return $translation->translation;
+
+        /*
+         * If the default translation locale doesn't equal the locale to translate to,
+         * we'll create a new translation record with the default
+         * translation text and return the default translation text
+         */
+        if($defaultTranslation->locale_id != $toLocale->id)
         {
+            $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
             return $translation->translation;
-
-        } else {
-
-            /*
-             * If the default translation locale doesn't equal the locale to translate to,
-             * we'll create a new translation record with the default
-             * translation text and return the default translation text
-             */
-            if($defaultTranslation->locale_id != $toLocale->id) {
-
-                $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
-
-                return $translation->translation;
-
-            }
-
-            return $defaultTranslation->translation;
         }
+
+        return $defaultTranslation->translation;
     }
 
     /**
@@ -204,20 +200,14 @@ class Translation {
     {
         $locale = $this->session->get('locale');
 
-        if($locale)
-        {
+        if($locale) return $locale;
 
-            return $locale;
+        /*
+         * First session
+         */
+        $this->setLocale($this->getDefaultLocale());
 
-        } else {
-
-            /*
-             * First session
-             */
-            $this->setLocale($this->getDefaultLocale());
-
-            return $this->getLocale();
-        }
+        return $this->getLocale();
     }
 
     /**
@@ -325,11 +315,7 @@ class Translation {
 
             $text = $googleTranslate->translate($text);
 
-            if($this->autoTranslateUcfirstEnabled())
-            {
-                $text = ucfirst($text);
-            }
-
+            if($this->autoTranslateUcfirstEnabled()) $text = ucfirst($text);
         }
 
         $translation = $this->translationModel->firstOrCreate(array(
@@ -355,10 +341,7 @@ class Translation {
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
-        if(!$this->cache->has($id))
-        {
-            $this->cache->put($id, $translation, $this->cacheTime);
-        }
+        if(!$this->cache->has($id)) $this->cache->put($id, $translation, $this->cacheTime);
     }
 
     /**
@@ -375,14 +358,13 @@ class Translation {
 
         $cachedTranslation = $this->cache->get($id);
 
-        if($cachedTranslation)
-        {
-            return $cachedTranslation;
+        if($cachedTranslation) return $cachedTranslation;
 
-        } else {
-
-            return false;
-        }
+        /*
+         * Cached translation wasn't found, let's
+         * return false so we know to generate one
+         */
+        return false;
     }
 
     /**
@@ -413,13 +395,9 @@ class Translation {
 
         $cachedLocale = $this->cache->get($id);
 
-        if($cachedLocale)
-        {
-            return $cachedLocale;
-        } else
-        {
-            return false;
-        }
+        if($cachedLocale) return $cachedLocale;
+
+        return false;
     }
 
     /**
@@ -448,15 +426,11 @@ class Translation {
     {
         $locales = $this->getConfigLocales();
 
-        if(array_key_exists($code, $locales))
-        {
-            return $locales[$code];
-        } else
-        {
-            $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
+        if(array_key_exists($code, $locales)) return $locales[$code];
 
-            throw new InvalidLocaleCode($message);
-        }
+        $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
+
+        throw new InvalidLocaleCode($message);
     }
 
     /**
@@ -467,10 +441,7 @@ class Translation {
      */
     private function setCacheTime($time)
     {
-        if(is_numeric($time))
-        {
-            $this->cacheTime = $time;
-        }
+        if(is_numeric($time)) $this->cacheTime = $time;
     }
 
     /**
@@ -539,11 +510,7 @@ class Translation {
 
         $appVersion = explode('.', $app::VERSION);
 
-        if($appVersion[0] == 5) {
-
-            $this->configSeparator = '.';
-
-        }
+        if($appVersion[0] == 5)  $this->configSeparator = '.';
     }
 
 }

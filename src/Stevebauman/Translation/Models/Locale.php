@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * Class Locale
  * @package Stevebauman\Translation\Models
  */
-class Locale extends Model {
-
+class Locale extends Model
+{
     protected $table = 'locales';
 
     protected $fillable = array(
@@ -27,5 +27,4 @@ class Locale extends Model {
     {
         return $this->hasMany('Stevebauman\Translation\Models\LocaleTranslation', 'locale_id', 'id');
     }
-
 }

@@ -3,7 +3,7 @@
 namespace Stevebauman\Translation;
 
 use Stichoza\Google\GoogleTranslate;
-use Stevebauman\Translation\Exceptions\InvalidLocaleCode;
+use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
 use Illuminate\Cache\CacheManager as Cache;
@@ -420,7 +420,7 @@ class Translation {
      *
      * @param $code
      * @return mixed
-     * @throws InvalidLocaleCode
+     * @throws InvalidLocaleCodeException
      */
     private function getConfigLocaleByCode($code)
     {
@@ -430,7 +430,7 @@ class Translation {
 
         $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
 
-        throw new InvalidLocaleCode($message);
+        throw new InvalidLocaleCodeException($message);
     }
 
     /**

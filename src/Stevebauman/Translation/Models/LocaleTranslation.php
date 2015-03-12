@@ -8,8 +8,8 @@ use Illuminate\Database\Eloquent\Model;
  * Class Translation
  * @package Stevebauman\Translation\Models
  */
-class LocaleTranslation extends Model {
-
+class LocaleTranslation extends Model
+{
     protected $table = 'locale_translations';
 
     protected $fillable = array(
@@ -37,5 +37,4 @@ class LocaleTranslation extends Model {
     {
         return $this->belongsTo('Stevebauman\Translation\Models\LocaleTranslation', 'translation_id');
     }
-
 }

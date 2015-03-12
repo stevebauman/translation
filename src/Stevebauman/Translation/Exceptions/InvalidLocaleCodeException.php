@@ -4,4 +4,4 @@ namespace Stevebauman\Translation\Exceptions;
 
 use \Exception;
 
-class InvalidLocaleCode extends Exception {}
+class InvalidLocaleCodeException extends Exception {}

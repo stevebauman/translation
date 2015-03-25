@@ -15,6 +15,10 @@
         "stichoza/google-translate-php": "3.0.*"
     },
     "autoload": {
+        "classmap": [
+            "src",
+            "tests"
+        ],
         "psr-0": {
             "Stevebauman\\Translation": "src/"
         }

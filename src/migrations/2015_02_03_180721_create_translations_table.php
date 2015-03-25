@@ -3,8 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateTranslationsTable extends Migration {
-
+class CreateTranslationsTable extends Migration
+{
 	/**
 	 * Run the migrations.
 	 *
@@ -12,8 +12,8 @@ class CreateTranslationsTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('locale_translations', function (Blueprint $table) {
-
+		Schema::create('locale_translations', function (Blueprint $table)
+        {
 			$table->increments('id');
 			$table->timestamps();
 			$table->integer('locale_id')->unsigned();
@@ -39,5 +39,4 @@ class CreateTranslationsTable extends Migration {
 	{
 		Schema::dropIfExists('locale_translations');
 	}
-
 }

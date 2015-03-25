@@ -3,8 +3,8 @@
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateLocalesTable extends Migration {
-
+class CreateLocalesTable extends Migration
+{
 	/**
 	 * Run the migrations.
 	 *
@@ -12,15 +12,14 @@ class CreateLocalesTable extends Migration {
 	 */
 	public function up()
 	{
-		Schema::create('locales', function (Blueprint $table) {
-
+		Schema::create('locales', function (Blueprint $table)
+        {
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('code')->unique();
 			$table->string('name')->nullable();
 			$table->string('display_name')->nullable();
 			$table->string('lang_code')->nullable();
-
 		});
 	}
 
@@ -33,5 +32,4 @@ class CreateLocalesTable extends Migration {
 	{
 		Schema::dropIfExists('locales');
 	}
-
 }

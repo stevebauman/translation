@@ -96,6 +96,7 @@ class Translation {
     private $cacheTime = 30;
 
     /**
+     * @param App $app
      * @param Config $config
      * @param Session $session
      * @param Cache $cache
@@ -426,7 +427,7 @@ class Translation {
     {
         $locales = $this->getConfigLocales();
 
-        if(array_key_exists($code, $locales)) return $locales[$code];
+        if(is_array($locales) && array_key_exists($code, $locales)) return $locales[$code];
 
         $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
 

@@ -2,7 +2,7 @@
 
 namespace Stevebauman\Translation;
 
-use Stichoza\Google\GoogleTranslate;
+use Stichoza\GoogleTranslate\TranslateClient;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
@@ -308,10 +308,10 @@ class Translation {
          */
         if($parentTranslation && $this->autoTranslateEnabled())
         {
-            $googleTranslate = new GoogleTranslate;
+            $googleTranslate = new TranslateClient;
 
-            $googleTranslate->setLangFrom($parentTranslation->locale->code);
-            $googleTranslate->setLangTo($locale->code);
+            $googleTranslate->setSource($parentTranslation->locale->code);
+            $googleTranslate->setTarget($locale->code);
 
             $text = $googleTranslate->translate($text);
 
@@ -502,15 +502,18 @@ class Translation {
      */
     private function setConfigSeparator()
     {
-        /*
-         * Need to store app instance in new variable due to
-         * constants being inaccessible via $this->app::VERSION
-         */
-        $app = $this->app;
+        if(defined(get_class($this->app).'::VERSION'))
+        {
+            /*
+             * Need to store app instance in new variable due to
+             * constants being inaccessible via $this->app::VERSION
+             */
+            $app = $this->app;
 
-        $appVersion = explode('.', $app::VERSION);
+            $appVersion = explode('.', $app::VERSION);
 
-        if($appVersion[0] == 5)  $this->configSeparator = '.';
+            if($appVersion[0] == 5) $this->configSeparator = '.';
+        }
     }
 
 }

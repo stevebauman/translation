@@ -138,4 +138,17 @@ class TranslationTest extends FunctionalTestCase
         $this->assertEquals(1, $french->translation_id);
         $this->assertEquals('Maison', $french->translation);
     }
+
+    public function testTranslateInvalidArgumentException()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate();
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->setExpectedException('InvalidArgumentException');
+
+        $this->translation->translate(new TranslationModel);
+    }
 }

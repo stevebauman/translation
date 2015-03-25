@@ -2,6 +2,7 @@
 
 namespace Stevebauman\Translation;
 
+use InvalidArgumentException;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
@@ -15,8 +16,8 @@ use Illuminate\Foundation\Application as App;
  * Class Translation
  * @package Stevebauman\Translation
  */
-class Translation {
-
+class Translation
+{
     /**
      * Holds the default application locale
      *
@@ -142,9 +143,12 @@ class Translation {
      * @param string $text
      * @param array $data
      * @return string
+     * @throws InvalidArgumentException
      */
     public function translate($text = '', $data = array())
     {
+        $this->validateText($text);
+
         $defaultTranslation = $this->getDefaultTranslation($text);
 
         $toLocale = $this->firstOrCreateLocale($this->getLocale());
@@ -314,7 +318,25 @@ class Translation {
             $googleTranslate->setSource($parentTranslation->locale->code);
             $googleTranslate->setTarget($locale->code);
 
-            $text = $googleTranslate->translate($text);
+            try
+            {
+                $text = $googleTranslate->translate($text);
+            } catch(\ErrorException $e)
+            {
+                /*
+                 * Request to translate failed, set
+                 * the text to the parent translation
+                 */
+                $text = $parentTranslation->translation;
+            } catch(\UnexpectedValueException $e)
+            {
+                /*
+                 * Looks like something other than text was
+                 * passed in, we'll set the text to the parent
+                 * translation for this exception as well
+                 */
+                $text = $parentTranslation->translation;
+            }
 
             if($this->autoTranslateUcfirstEnabled()) $text = ucfirst($text);
         }
@@ -494,6 +516,25 @@ class Translation {
     private function compressString($string)
     {
         return gzcompress($string);
+    }
+
+    /**
+     * Validates the inserted text to make sure it's a string
+     *
+     * @param $text
+     * @return bool
+     * @throws InvalidArgumentException
+     */
+    private function validateText($text)
+    {
+        if( ! is_string($text))
+        {
+            $message = "Invalid Argument. You must supply a string to be translated.";
+
+            throw new InvalidArgumentException($message);
+        }
+
+        return true;
     }
 
     /**

@@ -201,7 +201,7 @@ Would automatically generate a new translation record.
 ####Is there a maximum amount of text that can be auto-translated?
 
 Update: This package now uses [Stichoza's](https://github.com/Stichoza) new 3.0 update. This allows you to translate
-up to 4200 words (tested, possibly more allowed).
+up to 4200 words per request (tested, possibly more allowed).
 
 <del>Yes, according to [Google Translate PHP](https://github.com/Stichoza/google-translate-php/issues/8) there is a 1300 word
 limit <b>per request</b>. Just be sure to break you're content up so you don't hit the limit.</del>

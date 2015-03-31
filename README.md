@@ -53,7 +53,17 @@ View:
 Seen:
 
     Bienvenue sur notre page d'accueil
-    
+
+We can even use placeholders for dynamic content (added in `v1.1.0`)
+
+View:
+
+    {{ _t('Welcome :name, to our home page', array('name' => 'John')) }}
+
+Seen:
+
+    Bienvenue John , à notre page d'accueil
+
 Notice that we didn't actually change the text inside the view, which means everything stays completely readable in your
 locale to you (the developer!), which means no more trying to decipher what text may be inside that dot-notated translation
 path:
@@ -64,17 +74,19 @@ path:
 
 Require translation in your composer.json file
 
-    "stevebauman/translation": "1.0.*"
+    "stevebauman/translation": "1.1.*"
     
 Then run the composer update command on your project source
 
     composer update
     
-Add the service provider to your `app.php` config file
+#### Laravel 4
+    
+Add the service provider to your `app/config/app.php` config file
 
     'Stevebauman\Translation\TranslationServiceProvider',
     
-Add the facade to your aliases in your `app.php` config file
+Add the facade to your aliases in your `app/config/app.php` config file
 
     'Translation' => 'Stevebauman\Translation\Facades\Translation',
     
@@ -82,6 +94,26 @@ Run the migrations
 
     php artisan migrate --package="stevebauman/translation"
     
+Your good to go!
+
+#### Laravel 5
+
+Add the service provider to your `config/app.php` config file
+
+    'Stevebauman\Translation\TranslationServiceProvider',
+    
+Add the facade to your aliases in your `config/app.php` config file
+
+    'Translation' => 'Stevebauman\Translation\Facades\Translation',
+    
+Publish the migrations
+
+    php artisan vendor:publish
+    
+Run the migrations
+
+    php artisan migrate
+
 Your good to go!
 
 ##Usage
@@ -101,7 +133,11 @@ This is typically most useful in blade views:
 And you can even translate models easy by just plugging in your content:
 
     {{ _t($post->title) }}
-    
+
+Or use placeholders:
+
+    {{ _t('Post :title', array('title' => $post->title)) }}
+
 In your `locales` database table you'll have:
 
     | id | code |  name  | display_name | lang_code |

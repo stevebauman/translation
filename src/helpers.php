@@ -9,12 +9,12 @@ if(config('translation::shorthand_enabled') || config('translation.shorthand_ena
     /**
      * Shorthand function for translating text
      *
-     * @param $text
-     * @param array $data
-     * @return mixed
+     * @param string $text
+     * @param array $replacements
+     * @return string
      */
-    function _t($text, $data = array())
+    function _t($text, $replacements = array())
     {
-        return Translation::translate($text, $data);
+        return Translation::translate($text, $replacements);
     }
 }

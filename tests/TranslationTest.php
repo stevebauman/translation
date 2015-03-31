@@ -139,6 +139,60 @@ class TranslationTest extends FunctionalTestCase
         $this->assertEquals('Maison', $french->translation);
     }
 
+    public function testTranslatePlaceholders()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $result = $this->translation->translate('Hello :first_name :last_name, welcome to our website.', array(
+            'first_name' => 'John',
+            'last_name' => 'Doe'));
+
+        $this->assertEquals('Bonjour John Doe , bienvenue sur notre site .', $result);
+    }
+
+    public function testTranslateOnlyPlaceholder()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $result = $this->translation->translate(':test', array('test' => 'test'));
+
+        $this->assertEquals('test', $result);
+    }
+
+    public function testTranslateMultipleSamePlaceholders()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $result = $this->translation->translate(':name :name :name', array('name' => 'John'));
+
+        $this->assertEquals('John John John', $result);
+    }
+
+    public function testTranslateInvalidLocaleCode()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('testing');
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->setExpectedException('Stevebauman\Translation\Exceptions\InvalidLocaleCodeException');
+
+        $this->translation->translate('test');
+    }
+
     public function testTranslateInvalidArgumentException()
     {
         $this->prepareMockedCacheForTranslate();

@@ -141,12 +141,14 @@ class Translation
      * Returns the translation for the current locale
      *
      * @param string $text
-     * @param array $data
+     * @param array $replacements
      * @return string
      * @throws InvalidArgumentException
      */
-    public function translate($text = '', $data = array())
+    public function translate($text = '', $replacements = array())
     {
+        if(count($replacements) > 0) $text = $this->makeTranslationSafePlaceholders($text, $replacements);
+
         $this->validateText($text);
 
         $defaultTranslation = $this->getDefaultTranslation($text);
@@ -155,24 +157,31 @@ class Translation
 
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
 
-        /*
-         * A translation was found, let's return it
-         */
-        if($translation) return $translation->translation;
-
-        /*
-         * If the default translation locale doesn't equal the locale to translate to,
-         * we'll create a new translation record with the default
-         * translation text and return the default translation text
-         */
-        if($defaultTranslation->locale_id != $toLocale->id)
+        if($translation)
         {
-            $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
+            /*
+             * A translation was found, let's return it
+             */
+            return $this->makeReplacements($translation->translation, $replacements);
+        } else
+        {
+            /*
+             * If the default translation locale doesn't equal the locale to translate to,
+             * we'll create a new translation record with the default
+             * translation text and return the default translation text
+             */
+            if($defaultTranslation->locale_id != $toLocale->id)
+            {
+                $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
-            return $translation->translation;
+                return $this->makeReplacements($translation->translation, $replacements);
+            }
+
+            /*
+             * Always return default locale translation
+             */
+            return $this->makeReplacements($defaultTranslation->translation, $replacements);
         }
-
-        return $defaultTranslation->translation;
     }
 
     /**
@@ -249,6 +258,54 @@ class Translation
         $locale = $this->firstOrCreateLocale($this->getDefaultLocale());
 
         return $this->firstOrCreateTranslation($locale, $text);
+    }
+
+    /**
+     * Replaces laravel translation placeholders with google
+     * translate safe placeholders. Ex:
+     *
+     * Converts:
+     *      :name
+     *
+     * Into:
+     *      __name__
+     *
+     * @param $text
+     * @param array $replace
+     * @return mixed
+     */
+    private function makeTranslationSafePlaceholders($text, array $replace)
+    {
+        foreach ($replace as $key => $value)
+        {
+            $search = ':' . $key;
+
+            $replace = '__' . $key . '__';
+
+            $text = str_replace($search, $replace, $text);
+        }
+
+        return $text;
+    }
+
+    /**
+     * Make the place-holder replacements on a line.
+     *
+     * @param  string  $text
+     * @param  array   $replace
+     * @return string
+     */
+    private function makeReplacements($text, array $replace)
+    {
+        if(count($replace) > 0)
+        {
+            foreach ($replace as $key => $value)
+            {
+                $text = str_replace('__' . $key . '__', $value, $text);
+            }
+        }
+
+        return $text;
     }
 
     /**

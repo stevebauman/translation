@@ -178,11 +178,11 @@ You must provide you're own way of updating translations (controllers/views etc)
 
 ##Automatic Translation
 
-Automatic translation is enabled by default in the configuration file. It utilizes the package 
+Automatic translation is enabled by default in the configuration file. It utilizes the fantastic package 
 [Google Translate PHP](https://github.com/Stichoza/google-translate-php) by [Stichoza](https://github.com/Stichoza). 
 Using automatic translation will send the inserted text to google and save the returned text to the database. Once a 
 translation is saved in the database, it is never sent back to google to get re-translated. This means 
-that you don't have to worry about hitting a cap that google may impose.
+that you don't have to worry about hitting a cap that google may impose. You effectively <b>own</b> that translation.
 
 ##Commands
 

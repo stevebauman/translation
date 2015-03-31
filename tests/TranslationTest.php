@@ -180,6 +180,19 @@ class TranslationTest extends FunctionalTestCase
         $this->assertEquals('John John John', $result);
     }
 
+    public function testTranslatePlaceholdersWithWrongData()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $result = $this->translation->translate(':site_title :site_name', array('title' => 'Website', 'site_name' => 'test'));
+
+        $this->assertEquals(': site_title test', $result);
+    }
+
     public function testTranslateInvalidLocaleCode()
     {
         $this->prepareMockedCacheForTranslate();

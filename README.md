@@ -11,7 +11,7 @@
 ##Description
 
 Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly
-on your application and have it automatically added to the database and translated at runtime? Take this for example:
+on your application and have it automatically added to the database, cached, and translated at runtime? Take this for example:
 
 Controller:
 

@@ -14,8 +14,9 @@ class Locale extends Model
 
     protected $fillable = array(
         'code',
-        'name',
         'lang_code',
+        'name',
+        'display_name',
     );
 
     /**

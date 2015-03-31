@@ -17,9 +17,9 @@ class CreateLocalesTable extends Migration
 			$table->increments('id');
 			$table->timestamps();
 			$table->string('code')->unique();
+            $table->string('lang_code')->nullable();
 			$table->string('name')->nullable();
 			$table->string('display_name')->nullable();
-			$table->string('lang_code')->nullable();
 		});
 	}
 

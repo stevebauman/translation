@@ -220,7 +220,7 @@ When you add placeholders to your translation, and add the data to replace it, f
     _t('Hi :name', array('name' => 'John'))
     
 Translation parses each entry in the data array to see if the placeholder actually exists for the data inserted. For example,
-in the translation field in your database, here is the output of each:
+in the translation field in your database, here is what is saved:
 
     _t('Hi :name', array('name' => 'John')) // Hi __name__
     

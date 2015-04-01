@@ -8,7 +8,7 @@
 [![Total Downloads](https://poser.pugx.org/stevebauman/translation/downloads.svg)](https://packagist.org/packages/stevebauman/translation)
 [![License](https://poser.pugx.org/stevebauman/translation/license.svg)](https://packagist.org/packages/stevebauman/translation)
 
-##Description
+## Description
 
 Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly
 on your application and have it automatically added to the database, cached, and translated at runtime? Take this for example:
@@ -70,7 +70,7 @@ path:
 
     {{ trans('page.home.index.welcome') }}
     
-##Installation
+## Installation
 
 Require translation in your composer.json file
 
@@ -116,7 +116,7 @@ Run the migrations
 
 Your good to go!
 
-##Usage
+## Usage
 
 Anywhere in your application, either use the the shorthand function (can be disabled in config file)
 
@@ -176,7 +176,7 @@ Is called.
 
 You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.
 
-##Automatic Translation
+## Automatic Translation
 
 Automatic translation is enabled by default in the configuration file. It utilizes the fantastic package 
 [Google Translate PHP](https://github.com/Stichoza/google-translate-php) by [Stichoza](https://github.com/Stichoza). 
@@ -184,9 +184,9 @@ Using automatic translation will send the inserted text to google and save the r
 translation is saved in the database, it is never sent back to google to get re-translated. This means 
 that you don't have to worry about hitting a cap that google may impose. You effectively <b>own</b> that translation.
 
-##Commands
+## Commands
 
-####Scan
+#### Scan
 
 The scan command accepts one argument (directory) and one option (locale). It will look through each file in the directory
 given and add the translation in the database that has the format of:
@@ -213,12 +213,30 @@ for both locales.
 
 ##Questions / Concerns
 
-####Will my translations be erased / modified if I run the scan command?
+#### Why are there underscores where my placeholders should be in my database translations?
+
+When you add placeholders to your translation, and add the data to replace it, for example:
+
+    _t('Hi :name', array('name' => 'John'))
+    
+Translation parses each entry in the data array to see if the placeholder actually exists for the data inserted. For example,
+in the translation field in your database, here is the output of each:
+
+    _t('Hi :name', array('name' => 'John')) // Hi __name__
+    
+    _t('Hi :name', array('test' => 'John')) // Hi :name
+    
+Since the placeholder data inserted doesn't match a placeholder inside the string, the text will be left as is. The
+reason for the underscores is because google translate will try to translate text containing `:name`, however providing
+double underscores on both sides of the text, prevents google from translating that specific word, allowing us to translate
+everything else, but keep placeholders in tact.
+    
+#### Will my translations be erased / modified if I run the scan command?
 
 No. No translations are ever removed or updated from the scan command. Translations are only added. You will have to manage
 translations that are no longer in use. This may be changed in the future.
 
-####If I update / modify the text inside the translation function, what happens to it's translations?
+#### If I update / modify the text inside the translation function, what happens to it's translations?
 
 If you modify the text inside a translation function, it will create a new record and you will need to translate it again.
 This is intended because it could be a completely different translation after modification.
@@ -233,7 +251,7 @@ And modifying it to:
 
 Would automatically generate a new translation record.
 
-####Is there a maximum amount of text that can be auto-translated?
+#### Is there a maximum amount of text that can be auto-translated?
 
 Update: This package now uses [Stichoza's](https://github.com/Stichoza) new 3.0 update. This allows you to translate
 up to 4200 words per request (tested, possibly more allowed).

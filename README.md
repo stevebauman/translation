@@ -65,7 +65,7 @@ Seen:
     Bienvenue John , à notre page d'accueil
 
 Notice that we didn't actually change the text inside the view, which means everything stays completely readable in your
-locale to you (the developer!), which means no more trying to decipher what text may be inside that dot-notated translation
+locale to you (the developer!), which means no more managing tons of translation files and trying to decipher what text may be inside that dot-notated translation
 path:
 
     {{ trans('page.home.index.welcome') }}

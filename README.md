@@ -229,7 +229,8 @@ in the translation field in your database, here is the output of each:
 Since the placeholder data inserted doesn't match a placeholder inside the string, the text will be left as is. The
 reason for the underscores is because google translate will try to translate text containing `:name`, however providing
 double underscores on both sides of the text, prevents google from translating that specific word, allowing us to translate
-everything else, but keep placeholders in tact.
+everything else, but keep placeholders in tact. Translation then replaces the double underscore variant of the placeholder
+(in this case `__name__`) at runtime.
     
 #### Will my translations be erased / modified if I run the scan command?
 

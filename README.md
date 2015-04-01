@@ -130,7 +130,7 @@ This is typically most useful in blade views:
 
     {{ _t('Translate me!') }}
     
-And you can even translate models easy by just plugging in your content:
+And you can even translate models easily by just plugging in your content:
 
     {{ _t($post->title) }}
 

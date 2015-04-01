@@ -211,7 +211,7 @@ If you specify a locale, it will add all the translations for the app locale, as
 For example if your default app locale was 'en', and you supply 'fr' to the locale option, it will generate the translation records
 for both locales.
 
-##Questions / Concerns
+## Questions / Concerns
 
 #### Why are there underscores where my placeholders should be in my database translations?
 
@@ -259,3 +259,11 @@ up to 4200 words per request (tested, possibly more allowed).
 
 <del>Yes, according to [Google Translate PHP](https://github.com/Stichoza/google-translate-php/issues/8) there is a 1300 word
 limit <b>per request</b>. Just be sure to break you're content up so you don't hit the limit.</del>
+
+## Issues
+
+#### I'm trying to set the locale in my routes file but it never changes?
+
+Are you using Laravel 5 and the `file` driver for sessions by chance? This is a known issue with the Laravel 5 file session driver https://github.com/laravel/framework/issues/8244.
+
+Use another session driver for the time being, such as array or database.

@@ -97,6 +97,8 @@ class Translation
     private $cacheTime = 30;
 
     /**
+     * Constructor.
+     *
      * @param App $app
      * @param Config $config
      * @param Session $session
@@ -147,20 +149,43 @@ class Translation
      */
     public function translate($text = '', $replacements = array())
     {
-        if(count($replacements) > 0) $text = $this->makeTranslationSafePlaceholders($text, $replacements);
-
+        /*
+         * Make sure $text is actually a string and not
+         * and object / int
+         */
         $this->validateText($text);
 
+        /*
+         * If there are replacements inside the array we need to convert them
+         * into google translate safe placeholders. ex :name to __name__
+         */
+        if(count($replacements) > 0) $text = $this->makeTranslationSafePlaceholders($text, $replacements);
+
+        /*
+         * Get the default translation text. This will insert
+         * the translation and the default application locale
+         * if they don't exist using firstOrCreate
+         */
         $defaultTranslation = $this->getDefaultTranslation($text);
 
+        /*
+         * We need to create the locale we're translating to
+         * as well, if it's different than default
+         */
         $toLocale = $this->firstOrCreateLocale($this->getLocale());
 
+        /*
+         * Find the translation by the 'toLocale' and
+         * it's parent default translation ID
+         */
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
 
         if($translation)
         {
             /*
-             * A translation was found, let's return it
+             * A translation was found, we'll return it,
+             * but we need to make the final placeholder
+             * replacements if they exist
              */
             return $this->makeReplacements($translation->translation, $replacements);
         } else
@@ -168,7 +193,7 @@ class Translation
             /*
              * If the default translation locale doesn't equal the locale to translate to,
              * we'll create a new translation record with the default
-             * translation text and return the default translation text
+             * translation text, translate it, and return the translated text
              */
             if($defaultTranslation->locale_id != $toLocale->id)
             {
@@ -178,7 +203,8 @@ class Translation
             }
 
             /*
-             * Always return default locale translation
+             * Looks like we're on our default application locale.
+             * We'll return default locale translation
              */
             return $this->makeReplacements($defaultTranslation->translation, $replacements);
         }
@@ -205,8 +231,8 @@ class Translation
     }
 
     /**
-     * Retrieves the current locale from the session. If a locale isn't set then the default app locale
-     * is set as the current locale
+     * Retrieves the current locale from the session. If a locale
+     * isn't set then the default app locale is set as the current locale
      *
      * @return string
      */
@@ -247,8 +273,8 @@ class Translation
     }
 
     /**
-     * Returns the translation by the specified text and the applications
-     * default locale
+     * Returns the translation by the specified
+     * text and the applications default locale
      *
      * @param string $text
      * @return Translation
@@ -278,8 +304,10 @@ class Translation
     {
         foreach ($replace as $key => $value)
         {
+            // Search for :key
             $search = ':' . $key;
 
+            // Replace it with __key__
             $replace = '__' . $key . '__';
 
             $text = str_replace($search, $replace, $text);
@@ -289,7 +317,7 @@ class Translation
     }
 
     /**
-     * Make the place-holder replacements on a line.
+     * Make the place-holder replacements on the specified text
      *
      * @param  string  $text
      * @param  array   $replace
@@ -357,16 +385,16 @@ class Translation
     private function firstOrCreateTranslation($locale, $text, $parentTranslation = NULL)
     {
         /*
-         * We'll check to see if there's a cached translation first before we try
-         * and hit the database
+         * We'll check to see if there's a cached translation
+         * first before we try and hit the database
          */
         $cachedTranslation = $this->getCacheTranslation($locale, $text);
 
         if($cachedTranslation) return $cachedTranslation;
 
         /*
-         * Check if auto translation is enabled, if so we'll run the text through google
-         * translate and save the text.
+         * Check if auto translation is enabled. If so we'll run
+         * the text through google translate and save it, then cache it.
          */
         if($parentTranslation && $this->autoTranslateEnabled())
         {
@@ -421,7 +449,7 @@ class Translation
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
-        if(!$this->cache->has($id)) $this->cache->put($id, $translation, $this->cacheTime);
+        if( ! $this->cache->has($id)) $this->cache->put($id, $translation, $this->cacheTime);
     }
 
     /**

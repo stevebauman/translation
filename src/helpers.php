@@ -4,7 +4,7 @@
  * The Helpers.php file for Stevebauman/Translation
  */
 
-if(config('translation::shorthand_enabled') || config('translation.shorthand_enabled'))
+if(Config::get('translation::shorthand_enabled') || Config::get('translation.shorthand_enabled'))
 {
     if( ! function_exists('_t'))
     {

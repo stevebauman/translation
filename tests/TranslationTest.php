@@ -31,6 +31,7 @@ class TranslationTest extends FunctionalTestCase
             array(
                 'en' => 'English',
                 'fr' => 'French',
+                'ru' => 'Russian',
             ),
         ));
 
@@ -217,5 +218,88 @@ class TranslationTest extends FunctionalTestCase
         $this->setExpectedException('InvalidArgumentException');
 
         $this->translation->translate(new TranslationModel);
+    }
+
+    public function testTranslateIsParent()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate();
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->translation->translate('test');
+
+        $translation = TranslationModel::find(1);
+
+        $this->assertTrue($translation->isParent());
+    }
+
+    public function testTranslateIsNotParent()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->translation->translate('test');
+
+        $translation = TranslationModel::find(2);
+
+        $this->assertFalse($translation->isParent());
+    }
+
+    public function testTranslateGetTranslationsWithParent()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->translation->translate('test');
+
+        $translation = TranslationModel::find(1);
+
+        $translations = $translation->getTranslations();
+
+        $this->assertEquals(1, $translations->count());
+        $this->assertEquals('fr', $translations->get(0)->locale->code);
+    }
+
+    public function testTranslateGetTranslationsWithoutParent()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->translation->translate('test');
+
+        $translation = TranslationModel::find(2);
+
+        $translations = $translation->getTranslations();
+
+        $this->assertFalse($translations);
+    }
+
+    public function testTranslateGetParentTranslations()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate('fr');
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->translation->translate('test');
+
+        $translation = TranslationModel::find(2);
+
+        $translations = $translation->parent->getTranslations();
+
+        $this->assertEquals(1, $translations->count());
+        $this->assertEquals('fr', $translations->get(0)->locale->code);
     }
 }

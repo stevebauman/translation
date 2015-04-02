@@ -37,4 +37,33 @@ class LocaleTranslation extends Model
     {
         return $this->belongsTo('Stevebauman\Translation\Models\LocaleTranslation', 'translation_id');
     }
+
+    /**
+     * Returns true/false if the current translation
+     * record is the parent translation.
+     *
+     * @return bool
+     */
+    public function isParent()
+    {
+        if( ! $this->translation_id) return true;
+
+        return false;
+    }
+
+    /**
+     * Returns the translations of the current
+     * translation record
+     *
+     * @return mixed
+     */
+    public function getTranslations()
+    {
+        if($this->isParent())
+        {
+            return $this->where('translation_id', $this->id)->get();
+        }
+
+        return false;
+    }
 }

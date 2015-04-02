@@ -8,6 +8,10 @@
 [![Total Downloads](https://poser.pugx.org/stevebauman/translation/downloads.svg)](https://packagist.org/packages/stevebauman/translation)
 [![License](https://poser.pugx.org/stevebauman/translation/license.svg)](https://packagist.org/packages/stevebauman/translation)
 
+## TO DO
+
+- Move to a trait based model implementation so devs can use their own models
+
 ## Description
 
 Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly

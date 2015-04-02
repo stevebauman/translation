@@ -34,6 +34,8 @@ class ScanCommand extends Command {
     private $translator;
 
     /**
+     * Constructor.
+     *
      * @param Translation $translation
      */
     public function __construct(Translation $translation)
@@ -102,17 +104,11 @@ class ScanCommand extends Command {
      */
     private function verifyDirectory($directory)
     {
-        if(is_dir($directory)) {
+        if(is_dir($directory)) return true;
 
-            return true;
+        $message = sprintf('Directory: %s does not exist', $directory);
 
-        } else {
-
-            $message = sprintf('Directory: %s does not exist', $directory);
-
-            throw new DirectoryNotFoundException($message);
-
-        }
+        throw new DirectoryNotFoundException($message);
     }
 
     /**
@@ -148,16 +144,14 @@ class ScanCommand extends Command {
         foreach($files as $file)
         {
 
-            if(is_array($file)) {
-
+            if(is_array($file))
+            {
                 $messages[] = $this->processScan($file);
-
-            } else {
-
+            } else
+            {
                 $content = file_get_contents($file);
 
                 $messages[] = $this->parseContent($content);
-
             }
         }
 

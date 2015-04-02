@@ -8,10 +8,6 @@
 [![Total Downloads](https://poser.pugx.org/stevebauman/translation/downloads.svg)](https://packagist.org/packages/stevebauman/translation)
 [![License](https://poser.pugx.org/stevebauman/translation/license.svg)](https://packagist.org/packages/stevebauman/translation)
 
-## TO DO
-
-- Move to a trait based model implementation so devs can use their own models
-
 ## Description
 
 Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly
@@ -271,3 +267,7 @@ limit <b>per request</b>. Just be sure to break you're content up so you don't h
 Are you using Laravel 5 and the `file` driver for sessions by chance? This is a known issue with the Laravel 5 file session driver https://github.com/laravel/framework/issues/8244.
 
 Use another session driver for the time being, such as array or database.
+
+## TO DO
+
+- Move to a trait based model implementation so devs can use their own models

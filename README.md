@@ -183,7 +183,7 @@ View:
     
     <br>
     
-    _t('And french!', array(), 'ru');
+    _t('And french!', array(), 'fr');
 
 Seen:
 

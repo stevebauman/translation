@@ -144,10 +144,11 @@ class Translation
      *
      * @param string $text
      * @param array $replacements
+     * @param string $toLocale
      * @return string
      * @throws InvalidArgumentException
      */
-    public function translate($text = '', $replacements = array())
+    public function translate($text = '', $replacements = array(), $toLocale = '')
     {
         /*
          * Make sure $text is actually a string and not
@@ -169,10 +170,19 @@ class Translation
         $defaultTranslation = $this->getDefaultTranslation($text);
 
         /*
-         * We need to create the locale we're translating to
-         * as well, if it's different than default
+         * If a toLocale has been provided, we're only translating
+         * a single string, so we won't call the getLocale method
+         * as it retrieves and sets the default session locale.
+         * If it has not been provided, we'll get the default
+         * locale, and set it on the current session.
          */
-        $toLocale = $this->firstOrCreateLocale($this->getLocale());
+        if($toLocale)
+        {
+            $toLocale = $this->firstOrCreateLocale($toLocale);
+        } else
+        {
+            $toLocale = $this->firstOrCreateLocale($this->getLocale());
+        }
 
         /*
          * Find the translation by the 'toLocale' and
@@ -207,6 +217,7 @@ class Translation
              * We'll return default locale translation
              */
             return $this->makeReplacements($defaultTranslation->translation, $replacements);
+
         }
     }
 
@@ -483,7 +494,7 @@ class Translation
      */
     private function setCacheLocale($locale)
     {
-        if(!$this->cache->has($locale->code))
+        if( ! $this->cache->has($locale->code))
         {
             $id = sprintf($this->cacheLocaleStr, $locale->code);
 

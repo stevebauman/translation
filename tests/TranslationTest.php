@@ -119,9 +119,9 @@ class TranslationTest extends FunctionalTestCase
 
         $this->prepareMockedAppForTranslate();
 
-        $result = $this->translation->translate('Home');
+        $result = $this->translation->translate('Testing');
 
-        $this->assertEquals('Maison', $result);
+        $this->assertEquals('Essai', $result);
 
         $locales = LocaleModel::get();
 
@@ -132,12 +132,12 @@ class TranslationTest extends FunctionalTestCase
 
         $english = $translations->get(0);
         $this->assertEquals(1, $english->locale_id);
-        $this->assertEquals('Home', $english->translation);
+        $this->assertEquals('Testing', $english->translation);
 
         $french = $translations->get(1);
         $this->assertEquals(2, $french->locale_id);
         $this->assertEquals(1, $french->translation_id);
-        $this->assertEquals('Maison', $french->translation);
+        $this->assertEquals('Essai', $french->translation);
     }
 
     public function testTranslatePlaceholders()
@@ -301,5 +301,33 @@ class TranslationTest extends FunctionalTestCase
 
         $this->assertEquals(1, $translations->count());
         $this->assertEquals('fr', $translations->get(0)->locale->code);
+    }
+
+    public function testTranslateTemporary()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate();
+
+        $this->prepareMockedAppForTranslate();
+
+        $translated = $this->translation->translate('Testing', [], 'fr');
+        $notTranslated = $this->translation->translate('Testing');
+
+        $this->assertEquals('Essai', $translated);
+        $this->assertEquals('Testing', $notTranslated);
+    }
+
+    public function testTranslateTemporaryFailure()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate();
+
+        $this->prepareMockedAppForTranslate();
+
+        $this->setExpectedException('Stevebauman\Translation\Exceptions\InvalidLocaleCodeException');
+
+        $this->translation->translate('Testing', [], 'invalid locale');
     }
 }

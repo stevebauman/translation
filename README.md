@@ -74,7 +74,7 @@ path:
 
 Require translation in your composer.json file
 
-    "stevebauman/translation": "1.1.*"
+    "stevebauman/translation": "1.2.*"
     
 Then run the composer update command on your project source
 

@@ -192,8 +192,16 @@ Seen:
     Et françaises !
     
 This is great for showing users that your site supports different languages without changing the entire site
-language itself.
-    
+language itself. You can also perform replacements like usual:
+
+View:
+
+    _t('Hello :name, we also support french!', array('name' => 'John Doe'), 'fr');
+
+Seen:
+
+    Bonjour John Doe , nous soutenons aussi le français !
+
 Performing this will also create the locale in your database, save the translation, and cache it in case you need it again.
 
 You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.

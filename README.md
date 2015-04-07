@@ -168,11 +168,9 @@ And this in your `locale_translations` table:
        1        1         NULL        'Translate me!'
        2        2          1          'Traduisez-moi !'
 
-You can now update the translation on the new record and it will be shown wherever:
+You can now update the translation on the new record and it will be shown wherever it's called:
 
     _t('Translate me!')`
-    
-Is called.
 
 ###### Need to translate a single piece of text without setting the users default locale?
 
@@ -182,10 +180,19 @@ Just pass in the locale into the third argument inside the translation functions
 View:
 
     _t('Our website also supports russian!', array(), 'ru');
+    
+    <br>
+    
+    _t('And french!', array(), 'ru');
 
 Seen:
 
     Наш сайт также поддерживает России !
+    
+    Et françaises !
+    
+This is great for showing users that your site supports different languages without changing the entire site
+language itself.
     
 Performing this will also create the locale in your database, save the translation, and cache it in case you need it again.
 

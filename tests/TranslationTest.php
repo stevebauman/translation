@@ -318,6 +318,21 @@ class TranslationTest extends FunctionalTestCase
         $this->assertEquals('Testing', $notTranslated);
     }
 
+    public function testTranslateTemporaryWithReplacements()
+    {
+        $this->prepareMockedCacheForTranslate();
+
+        $this->prepareMockedSessionForTranslate();
+
+        $this->prepareMockedAppForTranslate();
+
+        $translated = $this->translation->translate('Hello :name', ['name' => 'John'], 'fr');
+        $notTranslated = $this->translation->translate('Hello :name', ['name' => 'John']);
+
+        $this->assertEquals('Bonjour John', $translated);
+        $this->assertEquals('Hello John', $notTranslated);
+    }
+
     public function testTranslateTemporaryFailure()
     {
         $this->prepareMockedCacheForTranslate();

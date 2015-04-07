@@ -174,6 +174,20 @@ You can now update the translation on the new record and it will be shown wherev
     
 Is called.
 
+Need to translate a single piece of text without setting the users default locale? Just pass in the locale
+into the third argument inside the translation functions show above like so:
+
+
+View:
+
+    _t('Our website also supports russian!', array(), 'ru');
+
+Seen:
+
+    Наш сайт также поддерживает России !
+    
+Performing this will also create the locale in your database, save the translation, and cache it in case you need it again.
+
 You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.
 
 ## Automatic Translation

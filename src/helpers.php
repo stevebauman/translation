@@ -13,11 +13,12 @@ if(Config::get('translation::shorthand_enabled') || Config::get('translation.sho
          *
          * @param string $text
          * @param array $replacements
+         * @param string $toLocale
          * @return string
          */
-        function _t($text, $replacements = array())
+        function _t($text, $replacements = array(), $toLocale = '')
         {
-            return Translation::translate($text, $replacements);
+            return Translation::translate($text, $replacements, $toLocale);
         }
     }
 }

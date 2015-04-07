@@ -179,11 +179,11 @@ Just pass in the locale into the third argument inside the translation functions
 
 View:
 
-    _t('Our website also supports russian!', array(), 'ru');
+    {{ _t('Our website also supports russian!', array(), 'ru') }}
     
     <br>
     
-    _t('And french!', array(), 'fr');
+    {{ _t('And french!', array(), 'fr') }}
 
 Seen:
 
@@ -196,7 +196,7 @@ language itself. You can also perform replacements like usual:
 
 View:
 
-    _t('Hello :name, we also support french!', array('name' => 'John Doe'), 'fr');
+    {{ _t('Hello :name, we also support french!', array('name' => 'John Doe'), 'fr') }}
 
 Seen:
 

@@ -174,8 +174,9 @@ You can now update the translation on the new record and it will be shown wherev
     
 Is called.
 
-Need to translate a single piece of text without setting the users default locale? Just pass in the locale
-into the third argument inside the translation functions show above like so:
+###### Need to translate a single piece of text without setting the users default locale?
+
+Just pass in the locale into the third argument inside the translation functions show above like so:
 
 
 View:

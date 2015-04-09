@@ -9,16 +9,44 @@ use Stevebauman\Translation\Translation;
 
 class TranslationTest extends FunctionalTestCase
 {
+    /**
+     * Holds the current Translation class instance
+     *
+     * @var Translation
+     */
     protected $translation;
 
+    /**
+     * Holds the current mocked app instance
+     *
+     * @var \Mockery\MockInterface
+     */
     protected $mockedApp;
 
+    /**
+     * Holds the current mocked config instance
+     *
+     * @var \Mockery\MockInterface
+     */
     protected $mockedConfig;
 
+    /**
+     * Holds the current mocked session instance
+     *
+     * @var \Mockery\MockInterface
+     */
     protected $mockedSession;
 
+    /**
+     * Holds the current mocked cache instance
+     *
+     * @var \Mockery\MockInterface
+     */
     protected $mockedCache;
 
+    /**
+     * Setup our environment for testing
+     */
     public function setUp()
     {
         parent::setUp();

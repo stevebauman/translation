@@ -19,13 +19,17 @@
       "phpunit/phpunit": "4.*",
       "mockery/mockery": "0.9.*"
     },
+    "archive": {
+      "exclude": ["/tests"]
+    },
     "autoload": {
-        "classmap": [
-            "src",
-            "tests"
-        ],
-        "psr-0": {
-            "Stevebauman\\Translation": "src/"
+        "psr-4": {
+            "Stevebauman\\Translation\\": "src/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Stevebauman\\Translation\\Tests\\": "tests/"
         }
     },
     "minimum-stability": "stable"

@@ -66,7 +66,7 @@ class TranslationServiceProvider extends ServiceProvider
 		/*
 		 * Include the helpers file for global `_t()` function
 		 */
-		include __DIR__ .'/../../helpers.php';
+		include __DIR__ . '/../../helpers.php';
 	}
 
 	/**

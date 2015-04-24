@@ -9,7 +9,7 @@
 
 ## Description
 
-Translation is a database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly
+Translation is a developer friendly, database driven, automatic translator for Laravel 4 / 5. Wouldn't it be nice to just write text regularly
 on your application and have it automatically translated, added to the database, and cached at runtime? Take this for example:
 
 Controller:

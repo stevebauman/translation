@@ -31,11 +31,11 @@ class TranslationServiceProvider extends ServiceProvider
 		} else
         {
 			$this->publishes([
-				__DIR__ . '/../../config/config.php' => config_path('translation.php'),
+				__DIR__ . '/config/config.php' => config_path('translation.php'),
 			], 'config');
 
 			$this->publishes([
-				__DIR__ . '/../../migrations/' => base_path('/database/migrations'),
+				__DIR__ . '/migrations/' => base_path('/database/migrations'),
 			], 'migrations');
 		}
 
@@ -66,7 +66,7 @@ class TranslationServiceProvider extends ServiceProvider
 		/*
 		 * Include the helpers file for global `_t()` function
 		 */
-		include __DIR__ . '/../../helpers.php';
+		include __DIR__ . '/helpers.php';
 	}
 
 	/**

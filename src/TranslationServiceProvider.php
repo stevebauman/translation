@@ -75,7 +75,7 @@ class TranslationServiceProvider extends ServiceProvider
 	 * @return array
 	 */
 	public function provides()
-	{
+    {
         return array('translation');
-	}
+    }
 }

@@ -9,11 +9,10 @@ use Illuminate\Console\Command;
 use Symfony\Component\Console\Input\InputOption;
 
 /**
- * Class ScanCommand
- * @package Stevebauman\Translation\Commands
+ * Class ScanCommand.
  */
-class ScanCommand extends Command {
-
+class ScanCommand extends Command
+{
     /**
      * The console command name.
      *
@@ -56,7 +55,9 @@ class ScanCommand extends Command {
 
         $locale = $this->option('locale');
 
-        if($locale) $this->translator->setLocale($locale);
+        if ($locale) {
+            $this->translator->setLocale($locale);
+        }
 
         $this->line('Checking directory...');
 
@@ -72,39 +73,43 @@ class ScanCommand extends Command {
     }
 
     /**
-     * Returns an array of accepted command arguments
+     * Returns an array of accepted command arguments.
      *
      * @return array
      */
     protected function getArguments()
     {
         return array(
-            array('directory', InputArgument::REQUIRED, 'The directory to search for translations in')
+            array('directory', InputArgument::REQUIRED, 'The directory to search for translations in'),
         );
     }
 
     /**
-     * Returns an array of accepted command options
+     * Returns an array of accepted command options.
      *
      * @return array
      */
     protected function getOptions()
     {
         return array(
-            array('locale', null, InputOption::VALUE_REQUIRED, 'The locale to generate the translations for')
+            array('locale', null, InputOption::VALUE_REQUIRED, 'The locale to generate the translations for'),
         );
     }
 
     /**
-     * Verifies if the directory specified exists
+     * Verifies if the directory specified exists.
      *
      * @param $directory
+     *
      * @return bool
+     *
      * @throws DirectoryNotFoundException
      */
     private function verifyDirectory($directory)
     {
-        if(is_dir($directory)) return true;
+        if (is_dir($directory)) {
+            return true;
+        }
 
         $message = sprintf('Directory: %s does not exist', $directory);
 
@@ -112,9 +117,10 @@ class ScanCommand extends Command {
     }
 
     /**
-     * Scans the inserted directory string and processes each file that's returned
+     * Scans the inserted directory string and processes each file that's returned.
      *
      * @param string $directory
+     *
      * @return int
      */
     private function scanDirectory($directory)
@@ -123,8 +129,7 @@ class ScanCommand extends Command {
 
         $results = $this->processScan($files);
 
-        foreach($results as $translation)
-        {
+        foreach ($results as $translation) {
             $this->translator->translate($translation);
         }
 
@@ -132,37 +137,35 @@ class ScanCommand extends Command {
     }
 
     /**
-     * Processes the scan command
+     * Processes the scan command.
      *
      * @param array $files
+     *
      * @return mixed
      */
     private function processScan($files = array())
     {
         $messages = array();
 
-        foreach($files as $file)
-        {
-
-            if(is_array($file))
-            {
+        foreach ($files as $file) {
+            if (is_array($file)) {
                 $messages[] = $this->processScan($file);
-            } else
-            {
+            } else {
                 $content = file_get_contents($file);
 
                 $messages[] = $this->parseContent($content);
             }
         }
 
-       return array_flatten(array_filter($messages));
+        return array_flatten(array_filter($messages));
     }
 
     /**
      * Parses content from a file and returns an array of messages to be inserted
-     * into the database
+     * into the database.
      *
      * @param $content
+     *
      * @return array
      */
     private function parseContent($content)
@@ -174,36 +177,45 @@ class ScanCommand extends Command {
          * Matches: _t('Test')
          */
         preg_match_all("#_t\(\'(.*?)\'\)#", $content, $match);
-        if (isset($match[1])) $messages = array_merge($messages, $match[1]);
+        if (isset($match[1])) {
+            $messages = array_merge($messages, $match[1]);
+        }
 
         /*
          * Regex: _t(\"(.*?)\")
          * Matches: _t("Test")
          */
         preg_match_all('#_t\(\"(.*?)\"\)#', $content, $match);
-        if (isset($match[1])) $messages = array_merge($messages, $match[1]);
+        if (isset($match[1])) {
+            $messages = array_merge($messages, $match[1]);
+        }
 
         /*
          * Regex: Translation::translate(\'(.*?)\')
          * Matches: Translation::translate('Test')
          */
         preg_match_all('#Translation::translate\(\'(.*?)\'\)#', $content, $match);
-        if (isset($match[1])) $messages = array_merge($messages, $match[1]);
+        if (isset($match[1])) {
+            $messages = array_merge($messages, $match[1]);
+        }
 
         /*
          * Regex: Translation::translate(\'(.*?)\')
          * Matches: Translation::translate("Test")
          */
         preg_match_all('#Translation::translate\(\"(.*?)\"\)#', $content, $match);
-        if (isset($match[1])) $messages = array_merge($messages, $match[1]);
+        if (isset($match[1])) {
+            $messages = array_merge($messages, $match[1]);
+        }
 
         return $messages;
     }
 
     /**
-     * Scans recursively and returns an array of files/folders in the specified directory
+     * Scans recursively and returns an array of files/folders in the specified directory.
      *
      * @param $dir
+     *
      * @return array
      */
     private function dirToArray($dir)
@@ -212,16 +224,12 @@ class ScanCommand extends Command {
 
         $cdir = scandir($dir);
 
-        foreach ($cdir as $key => $value)
-        {
-            if ( ! in_array($value, array(".", "..")))
-            {
-                if (is_dir($dir . DIRECTORY_SEPARATOR . $value))
-                {
-                    $result[$value] = $this->dirToArray($dir . DIRECTORY_SEPARATOR . $value);
-                } else
-                {
-                    $result[] = $dir . DIRECTORY_SEPARATOR . $value;
+        foreach ($cdir as $key => $value) {
+            if (!in_array($value, array('.', '..'))) {
+                if (is_dir($dir.DIRECTORY_SEPARATOR.$value)) {
+                    $result[$value] = $this->dirToArray($dir.DIRECTORY_SEPARATOR.$value);
+                } else {
+                    $result[] = $dir.DIRECTORY_SEPARATOR.$value;
                 }
             }
         }

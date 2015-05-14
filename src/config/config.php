@@ -1,19 +1,18 @@
 <?php
 
 /**
- * The translation configuration file
- *
+ * The translation configuration file.
  */
 return array(
 
-    /**
+    /*
      * Enables use of the shorthand translation function _l($translation, $locale = NULL)
      *
      * Must be boolean
      */
     'shorthand_enabled' => true,
 
-    /**
+    /*
      * Automatically translates text inserted by using google translate.
      *
      * !! Limit of 1300 Words per request !!
@@ -227,6 +226,6 @@ return array(
         'za' => 'Zhuang, Chuang',
         'zh' => 'Chinese',
         'zu' => 'Zulu',
-    )
+    ),
 
 );

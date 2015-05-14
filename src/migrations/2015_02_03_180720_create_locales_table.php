@@ -5,31 +5,26 @@ use Illuminate\Database\Migrations\Migration;
 
 class CreateLocalesTable extends Migration
 {
-	/**
-	 * Run the migrations.
-	 *
-	 * @return void
-	 */
-	public function up()
-	{
-		Schema::create('locales', function (Blueprint $table)
-        {
-			$table->increments('id');
-			$table->timestamps();
-			$table->string('code')->unique();
+    /**
+     * Run the migrations.
+     */
+    public function up()
+    {
+        Schema::create('locales', function (Blueprint $table) {
+            $table->increments('id');
+            $table->timestamps();
+            $table->string('code')->unique();
             $table->string('lang_code')->nullable();
-			$table->string('name')->nullable();
-			$table->string('display_name')->nullable();
-		});
-	}
+            $table->string('name')->nullable();
+            $table->string('display_name')->nullable();
+        });
+    }
 
-	/**
-	 * Reverse the migrations.
-	 *
-	 * @return void
-	 */
-	public function down()
-	{
-		Schema::dropIfExists('locales');
-	}
+    /**
+     * Reverse the migrations.
+     */
+    public function down()
+    {
+        Schema::dropIfExists('locales');
+    }
 }

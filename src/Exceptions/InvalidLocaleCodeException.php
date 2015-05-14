@@ -2,6 +2,8 @@
 
 namespace Stevebauman\Translation\Exceptions;
 
-use \Exception;
+use Exception;
 
-class InvalidLocaleCodeException extends Exception {}
+class InvalidLocaleCodeException extends Exception
+{
+}

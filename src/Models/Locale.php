@@ -5,8 +5,7 @@ namespace Stevebauman\Translation\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Locale
- * @package Stevebauman\Translation\Models
+ * Class Locale.
  */
 class Locale extends Model
 {
@@ -20,7 +19,7 @@ class Locale extends Model
     );
 
     /**
-     * The hasMany translations relationship
+     * The hasMany translations relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\HasMany
      */

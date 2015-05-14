@@ -2,6 +2,8 @@
 
 namespace Stevebauman\Translation\Exceptions\Commands;
 
-use \Exception;
+use Exception;
 
-class DirectoryNotFoundException extends Exception {}
+class DirectoryNotFoundException extends Exception
+{
+}

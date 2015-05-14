@@ -5,8 +5,7 @@ namespace Stevebauman\Translation\Models;
 use Illuminate\Database\Eloquent\Model;
 
 /**
- * Class Translation
- * @package Stevebauman\Translation\Models
+ * Class Translation.
  */
 class LocaleTranslation extends Model
 {
@@ -19,17 +18,17 @@ class LocaleTranslation extends Model
     );
 
     /**
-     * The belongsTo locale relationship
+     * The belongsTo locale relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
     public function locale()
     {
-        return $this->belongsTo('Stevebauman\Translation\Models\Locale','locale_id', 'id');
+        return $this->belongsTo('Stevebauman\Translation\Models\Locale', 'locale_id', 'id');
     }
 
     /**
-     * The belongsTo parent relationship
+     * The belongsTo parent relationship.
      *
      * @return \Illuminate\Database\Eloquent\Relations\BelongsTo
      */
@@ -46,21 +45,22 @@ class LocaleTranslation extends Model
      */
     public function isParent()
     {
-        if( ! $this->translation_id) return true;
+        if (!$this->translation_id) {
+            return true;
+        }
 
         return false;
     }
 
     /**
      * Returns the translations of the current
-     * translation record
+     * translation record.
      *
      * @return mixed
      */
     public function getTranslations()
     {
-        if($this->isParent())
-        {
+        if ($this->isParent()) {
             return $this->where('translation_id', $this->id)->get();
         }
 

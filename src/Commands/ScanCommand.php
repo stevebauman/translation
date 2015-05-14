@@ -79,9 +79,9 @@ class ScanCommand extends Command
      */
     protected function getArguments()
     {
-        return array(
-            array('directory', InputArgument::REQUIRED, 'The directory to search for translations in'),
-        );
+        return [
+            ['directory', InputArgument::REQUIRED, 'The directory to search for translations in'],
+        ];
     }
 
     /**
@@ -91,9 +91,9 @@ class ScanCommand extends Command
      */
     protected function getOptions()
     {
-        return array(
-            array('locale', null, InputOption::VALUE_REQUIRED, 'The locale to generate the translations for'),
-        );
+        return [
+            ['locale', null, InputOption::VALUE_REQUIRED, 'The locale to generate the translations for'],
+        ];
     }
 
     /**
@@ -143,9 +143,9 @@ class ScanCommand extends Command
      *
      * @return mixed
      */
-    private function processScan($files = array())
+    private function processScan($files = [])
     {
-        $messages = array();
+        $messages = [];
 
         foreach ($files as $file) {
             if (is_array($file)) {
@@ -220,12 +220,12 @@ class ScanCommand extends Command
      */
     private function dirToArray($dir)
     {
-        $result = array();
+        $result = [];
 
         $cdir = scandir($dir);
 
         foreach ($cdir as $key => $value) {
-            if (!in_array($value, array('.', '..'))) {
+            if (!in_array($value, ['.', '..'])) {
                 if (is_dir($dir.DIRECTORY_SEPARATOR.$value)) {
                     $result[$value] = $this->dirToArray($dir.DIRECTORY_SEPARATOR.$value);
                 } else {

@@ -3,7 +3,7 @@
 /**
  * The translation configuration file.
  */
-return array(
+return [
 
     /*
      * Enables use of the shorthand translation function _l($translation, $locale = NULL)
@@ -41,7 +41,7 @@ return array(
      *
      * Must be array
      */
-    'locales' => array(
+    'locales' => [
         'aa' => 'Afar',
         'ab' => 'Abkhaz',
         'ae' => 'Avestan',
@@ -226,6 +226,6 @@ return array(
         'za' => 'Zhuang, Chuang',
         'zh' => 'Chinese',
         'zu' => 'Zulu',
-    ),
+    ],
 
-);
+];

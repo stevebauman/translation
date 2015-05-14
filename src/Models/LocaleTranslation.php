@@ -11,11 +11,11 @@ class LocaleTranslation extends Model
 {
     protected $table = 'locale_translations';
 
-    protected $fillable = array(
+    protected $fillable = [
         'locale_id',
         'translation_id',
         'translation',
-    );
+    ];
 
     /**
      * The belongsTo locale relationship.

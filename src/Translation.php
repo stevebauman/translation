@@ -149,7 +149,7 @@ class Translation
      *
      * @throws InvalidArgumentException
      */
-    public function translate($text = '', $replacements = array(), $toLocale = '')
+    public function translate($text = '', $replacements = [], $toLocale = '')
     {
         /*
          * Make sure $text is actually a string and not
@@ -363,10 +363,10 @@ class Translation
 
         $name = $this->getConfigLocaleByCode($code);
 
-        $locale = $this->localeModel->firstOrCreate(array(
+        $locale = $this->localeModel->firstOrCreate([
             'code' => $code,
             'name' => $name,
-        ));
+        ]);
 
         $this->setCacheLocale($locale);
 
@@ -441,11 +441,11 @@ class Translation
             }
         }
 
-        $translation = $this->translationModel->firstOrCreate(array(
+        $translation = $this->translationModel->firstOrCreate([
             'locale_id' => $locale->id,
             'translation_id' => (isset($parentTranslation) ? $parentTranslation->id  : null),
             'translation' => $text,
-        ));
+        ]);
 
         /*
          * Cache the translation so it's retrieved faster next time

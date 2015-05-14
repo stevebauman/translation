@@ -11,12 +11,12 @@ class Locale extends Model
 {
     protected $table = 'locales';
 
-    protected $fillable = array(
+    protected $fillable = [
         'code',
         'lang_code',
         'name',
         'display_name',
-    );
+    ];
 
     /**
      * The hasMany translations relationship.

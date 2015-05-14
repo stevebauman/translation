@@ -57,9 +57,9 @@ class TranslationServiceProvider extends ServiceProvider
         /*
          * Register the commands
          */
-        $this->commands(array(
+        $this->commands([
             'translation:scan',
-        ));
+        ]);
 
         /*
          * Include the helpers file for global `_t()` function
@@ -74,6 +74,6 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function provides()
     {
-        return array('translation');
+        return ['translation'];
     }
 }

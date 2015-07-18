@@ -27,7 +27,7 @@ class TranslationServiceProvider extends ServiceProvider
          * definitely on laravel 5
          */
         if (method_exists($this, 'package')) {
-            $this->package('stevebauman/translation');
+            $this->package('stevebauman/translation', 'translation', __DIR__);
         } else {
             $this->publishes([
                 __DIR__.'/config/config.php' => config_path('translation.php'),

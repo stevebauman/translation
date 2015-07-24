@@ -10,7 +10,8 @@ class CreateTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('locale_translations', function (Blueprint $table) {
+        Schema::create('locale_translations', function (Blueprint $table)
+        {
             $table->increments('id');
             $table->timestamps();
             $table->integer('locale_id')->unsigned();

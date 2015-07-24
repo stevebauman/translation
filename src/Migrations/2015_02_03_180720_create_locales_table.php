@@ -10,7 +10,8 @@ class CreateLocalesTable extends Migration
      */
     public function up()
     {
-        Schema::create('locales', function (Blueprint $table) {
+        Schema::create('locales', function (Blueprint $table)
+        {
             $table->increments('id');
             $table->timestamps();
             $table->string('code')->unique();

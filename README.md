@@ -77,24 +77,6 @@ Require translation in your composer.json file
 Then run the composer update command on your project source
 
     composer update
-    
-#### Laravel 4
-    
-Add the service provider to your `app/config/app.php` config file
-
-    'Stevebauman\Translation\TranslationServiceProvider',
-    
-Add the facade to your aliases in your `app/config/app.php` config file
-
-    'Translation' => 'Stevebauman\Translation\Facades\Translation',
-    
-Run the migrations
-
-    php artisan migrate --package="stevebauman/translation"
-    
-Your good to go!
-
-#### Laravel 5
 
 Add the service provider to your `config/app.php` config file
 
@@ -204,6 +186,10 @@ Performing this will also create the locale in your database, save the translati
 
 You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.
 
+## Routes
+
+
+
 ## Automatic Translation
 
 Automatic translation is enabled by default in the configuration file. It utilizes the fantastic package 
@@ -292,10 +278,6 @@ limit <b>per request</b>. Just be sure to break you're content up so you don't h
 
 #### I'm trying to set the locale in my routes file but it never changes?
 
-Are you using Laravel 5 and the `file` driver for sessions by chance? This is a known issue with the Laravel 5 file session driver https://github.com/laravel/framework/issues/8244.
+Are you using the `file` driver for sessions by chance? This is a known issue with the Laravel 5 file session driver https://github.com/laravel/framework/issues/8244.
 
 Use another session driver for the time being, such as array or database.
-
-## TO DO
-
-- Move to a trait based model implementation so devs can use their own models

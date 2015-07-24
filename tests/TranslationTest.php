@@ -78,13 +78,6 @@ class TranslationTest extends TestCase
         Translation::translate('Valid', 'Invalid');
     }
 
-    public function testTranslationInvalidDynamicLocale()
-    {
-        $this->setExpectedException('Stevebauman\Translation\Exceptions\InvalidLocaleCodeException');
-
-        Translation::translate('Valid', ['Valid'], 'Invalid');
-    }
-
     public function testTranslationDefaultLocale()
     {
         $this->assertEquals('Test', Translation::translate('Test'));

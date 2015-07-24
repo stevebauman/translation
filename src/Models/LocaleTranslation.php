@@ -31,7 +31,7 @@ class LocaleTranslation extends Model
      */
     public function locale()
     {
-        return $this->belongsTo(self::class, 'locale_id', 'id');
+        return $this->belongsTo(Locale::class, 'locale_id', 'id');
     }
 
     /**

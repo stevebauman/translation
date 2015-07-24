@@ -3,18 +3,17 @@
 namespace Stevebauman\Translation;
 
 use InvalidArgumentException;
+use Stevebauman\Translation\Models\Locale;
+use Stevebauman\Translation\Models\LocaleTranslation;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
-use Illuminate\Cache\CacheManager as Cache;
-use Illuminate\Session\SessionManager as Session;
-use Illuminate\Config\Repository as Config;
-use Illuminate\Foundation\Application as App;
+use Illuminate\Cache\CacheManager;
+use Illuminate\Session\SessionManager;
+use Illuminate\Config\Repository;
+use Illuminate\Foundation\Application;
 
-/**
- * Class Translation.
- */
 class Translation
 {
     /**
@@ -41,28 +40,28 @@ class Translation
     /**
      * Holds the current application instance.
      *
-     * @var App
+     * @var Application
      */
     protected $app;
 
     /**
      * Holds the current cache instance.
      *
-     * @var Cache
+     * @var Repository
      */
     protected $cache;
 
     /**
      * Holds the current session instance.
      *
-     * @var Session
+     * @var SessionManager
      */
     protected $session;
 
     /**
      * Holds the current config instance.
      *
-     * @var Config
+     * @var CacheManager
      */
     protected $config;
 
@@ -89,7 +88,7 @@ class Translation
     private $cacheLocaleStr = 'translation::%s';
 
     /**
-     * The amount of time (minutes) to store the cached translations.
+     * The default amount of time (minutes) to store the cached translations.
      *
      * @var int
      */
@@ -98,28 +97,17 @@ class Translation
     /**
      * Constructor.
      *
-     * @param App              $app
-     * @param Config           $config
-     * @param Session          $session
-     * @param Cache            $cache
-     * @param LocaleModel      $localeModel
-     * @param TranslationModel $translationModel
+     * @param Application $app
      */
-    public function __construct(
-        App $app,
-        Config $config,
-        Session $session,
-        Cache $cache,
-        LocaleModel $localeModel,
-        TranslationModel $translationModel)
+    public function __construct(Application $app)
     {
         $this->app = $app;
-        $this->config = $config;
-        $this->session = $session;
-        $this->cache = $cache;
+        $this->config = $app->make('config');
+        $this->session = $app->make('session');
+        $this->cache = $app->make('cache');
 
-        $this->localeModel = $localeModel;
-        $this->translationModel = $translationModel;
+        $this->localeModel = $app->make($this->getConfigLocaleModel());
+        $this->translationModel = $app->make($this->getConfigTranslationModel());
 
         /*
          * Set the default locale to the current application locale
@@ -130,12 +118,6 @@ class Translation
          * Set the cache time from the configuration
          */
         $this->setCacheTime($this->getConfigCacheTime());
-
-        /*
-         * Set the configuration separator for compatibility with
-         * Laravel 4 / 5
-         */
-        $this->setConfigSeparator();
     }
 
     /**
@@ -580,13 +562,33 @@ class Translation
     }
 
     /**
+     * Returns the locale model from the configuration.
+     *
+     * @return string
+     */
+    private function getConfigLocaleModel()
+    {
+        return $this->config->get('translation.models.locale', Locale::class);
+    }
+
+    /**
+     * Returns the translation model from the configuration.
+     *
+     * @return string
+     */
+    public function getConfigTranslationModel()
+    {
+        return $this->config->get('translation.models.translation', LocaleTranslation::class);
+    }
+
+    /**
      * Returns the array of configuration locales.
      *
      * @return array
      */
     private function getConfigLocales()
     {
-        return $this->config->get('translation'.$this->configSeparator.'locales');
+        return $this->config->get('translation.locales');
     }
 
     /**
@@ -596,7 +598,7 @@ class Translation
      */
     private function getConfigCacheTime()
     {
-        return $this->config->get('translation:'.$this->configSeparator.'cache_time');
+        return $this->config->get('translation.cache_time');
     }
 
     /**
@@ -606,7 +608,7 @@ class Translation
      */
     private function autoTranslateEnabled()
     {
-        return $this->config->get('translation'.$this->configSeparator.'auto_translate');
+        return $this->config->get('translation.auto_translate');
     }
 
     /**
@@ -616,7 +618,7 @@ class Translation
      */
     private function autoTranslateUcfirstEnabled()
     {
-        return $this->config->get('translation'.$this->configSeparator.'auto_translate_ucfirst');
+        return $this->config->get('translation.auto_translate_ucfirst');
     }
 
     /**
@@ -649,25 +651,5 @@ class Translation
         }
 
         return true;
-    }
-
-    /**
-     * Sets the configuration separator for Laravel 5 compatibility.
-     */
-    private function setConfigSeparator()
-    {
-        if (defined(get_class($this->app).'::VERSION')) {
-            /*
-             * Need to store app instance in new variable due to
-             * constants being inaccessible via $this->app::VERSION
-             */
-            $app = $this->app;
-
-            $appVersion = explode('.', $app::VERSION);
-
-            if ($appVersion[0] == 5) {
-                $this->configSeparator = '.';
-            }
-        }
     }
 }

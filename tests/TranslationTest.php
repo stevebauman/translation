@@ -64,11 +64,25 @@ class TranslationTest extends TestCase
         return ['Translation' => \Stevebauman\Translation\Facades\Translation::class];
     }
 
-    public function testTranslationInvalidArgumentException()
+    public function testTranslationInvalidText()
     {
         $this->setExpectedException('InvalidArgumentException');
 
-        Translation::translate(['test']);
+        Translation::translate(['Invalid']);
+    }
+
+    public function testTranslationInvalidReplacements()
+    {
+        $this->setExpectedException('ErrorException');
+
+        Translation::translate('Valid', 'Invalid');
+    }
+
+    public function testTranslationInvalidDynamicLocale()
+    {
+        $this->setExpectedException('Stevebauman\Translation\Exceptions\InvalidLocaleCodeException');
+
+        Translation::translate('Valid', ['Valid'], 'Invalid');
     }
 
     public function testTranslationDefaultLocale()
@@ -110,11 +124,11 @@ class TranslationTest extends TestCase
         $replace = [
             'name' => 'John',
             'apples' => '10',
-            'bananas' => '10',
-            'grapes' => '10',
+            'bananas' => '15',
+            'grapes' => '20',
         ];
 
-        $expected = 'Hello John, I see you have 10 apples, 10 bananas, and 10 grapes.';
+        $expected = 'Hello John, I see you have 10 apples, 15 bananas, and 20 grapes.';
 
         $translation = 'Hello :name, I see you have :apples apples, :bananas bananas, and :grapes grapes.';
 

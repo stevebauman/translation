@@ -20,7 +20,7 @@ class TranslationServiceProvider extends ServiceProvider
     public function boot()
     {
         Blade::directive('t', function($expression) {
-            return "<?php echo _t{$expression}; ?>";
+            return "<?php echo App::make('translation')->translate{$expression}; ?>";
         });
     }
 

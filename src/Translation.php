@@ -3,7 +3,6 @@
 namespace Stevebauman\Translation;
 
 use InvalidArgumentException;
-use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Foundation\Application;
@@ -326,8 +325,8 @@ class Translation
     /**
      * Returns the translation from the parent records.
      *
-     * @param $localeId
-     * @param $parentId
+     * @param int $localeId
+     * @param int $parentId
      *
      * @return Model|null
      */

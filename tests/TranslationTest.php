@@ -19,7 +19,7 @@ class TranslationTest extends TestCase
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__.'/../src/migrations'),
+            '--realpath' => realpath(__DIR__.'/../src/Migrations'),
         ]);
     }
 

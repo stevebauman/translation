@@ -32,11 +32,11 @@ class TranslationServiceProvider extends ServiceProvider
     public function register()
     {
         $this->publishes([
-            __DIR__.'/config/config.php' => config_path('translation.php'),
+            __DIR__.'/Config/config.php' => config_path('translation.php'),
         ], 'config');
 
         $this->publishes([
-            __DIR__.'/migrations/' => base_path('/database/migrations'),
+            __DIR__.'/Migrations/' => base_path('/database/migrations'),
         ], 'migrations');
 
         $this->app->bind('translation', function($app) {

@@ -4,8 +4,6 @@ namespace Stevebauman\Translation;
 
 use InvalidArgumentException;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
-use Stevebauman\Translation\Models\Locale;
-use Stevebauman\Translation\Models\LocaleTranslation;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Cache\CacheManager;
@@ -565,7 +563,7 @@ class Translation
      */
     private function getConfigLocaleModel()
     {
-        return $this->config->get('translation.models.locale', Locale::class);
+        return $this->config->get('translation.models.locale', Models\Locale::class);
     }
 
     /**
@@ -575,7 +573,7 @@ class Translation
      */
     public function getConfigTranslationModel()
     {
-        return $this->config->get('translation.models.translation', LocaleTranslation::class);
+        return $this->config->get('translation.models.translation', Models\LocaleTranslation::class);
     }
 
     /**

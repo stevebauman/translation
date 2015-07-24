@@ -6,18 +6,29 @@
 return [
 
     /*
+     * The models to use for storing locales, and translations.
+     *
+     * @var array
+     */
+    'models' => [
+
+        'locale' => Stevebauman\Translation\Models\Locale::class,
+
+        'translation' => Stevebauman\Translation\Models\LocaleTranslation::class,
+
+    ],
+
+    /*
      * Enables use of the shorthand translation function _l($translation, $locale = NULL)
      *
-     * Must be boolean
+     * @var bool
      */
     'shorthand_enabled' => true,
 
     /*
      * Automatically translates text inserted by using google translate.
      *
-     * !! Limit of 1300 Words per request !!
-     *
-     * Must be boolean
+     * @var bool
      */
     'auto_translate' => true,
 
@@ -25,21 +36,21 @@ return [
      * Runs translations through php function `ucfirst` to upper case the first
      * letter of returned translations.
      *
-     * Must be boolean
+     * @var bool
      */
     'auto_translate_ucfirst' => true,
 
     /*
      * The amount of minutes to store the translations / locales in cache, default is 30 minutes
      *
-     * Must be int|string
+     * @var int
      */
     'cache_time' => 30,
 
     /*
      * The locales array for converting a locale code into the english language name
      *
-     * Must be array
+     * @var array
      */
     'locales' => [
         'aa' => 'Afar',

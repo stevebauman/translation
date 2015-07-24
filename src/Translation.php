@@ -59,20 +59,6 @@ class Translation
     protected $request;
 
     /**
-     * The sprintf format to retrieve a translation from the cache.
-     *
-     * @var string
-     */
-    private $cacheTranslationStr = 'translation::%s.%s';
-
-    /**
-     * The sprintf format to retrieve a translation from the cache.
-     *
-     * @var string
-     */
-    private $cacheLocaleStr = 'translation::%s';
-
-    /**
      * The default amount of time (minutes) to store the cached translations.
      *
      * @var int
@@ -447,7 +433,7 @@ class Translation
     private function setCacheLocale(Model $locale)
     {
         if (!$this->cache->has($locale->code)) {
-            $id = sprintf($this->cacheLocaleStr, $locale->code);
+            $id = sprintf('translation::%s', $locale->code);
 
             $this->cache->put($id, $locale, $this->cacheTime);
         }
@@ -462,12 +448,10 @@ class Translation
      */
     private function getCacheLocale($code)
     {
-        $id = sprintf($this->cacheLocaleStr, $code);
+        $id = sprintf('translation::%s', $code);
 
-        $cachedLocale = $this->cache->get($id);
-
-        if ($cachedLocale) {
-            return $cachedLocale;
+        if($this->cache->has($id)) {
+            return $this->cache->get($id);
         }
 
         return false;
@@ -486,7 +470,7 @@ class Translation
     {
         $compressed = $this->compressString($text);
 
-        return sprintf($this->cacheTranslationStr, $locale->code, $compressed);
+        return sprintf('translation::%s.%s', $locale->code, $compressed);
     }
 
     /**

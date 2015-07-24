@@ -4,6 +4,8 @@ namespace Stevebauman\Translation;
 
 use InvalidArgumentException;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
+use Stevebauman\Translation\Models\Locale;
+use Stevebauman\Translation\Models\LocaleTranslation;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Cache\CacheManager;

@@ -2,375 +2,70 @@
 
 namespace Stevebauman\Translation\Tests;
 
-use Mockery as m;
-use Stevebauman\Translation\Models\Locale as LocaleModel;
-use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
-use Stevebauman\Translation\Translation;
+use Orchestra\Testbench\TestCase;
+use Stevebauman\Translation\Models\Locale;
+use Stevebauman\Translation\Models\LocaleTranslation;
+use Stevebauman\Translation\Facades\Translation;
+use Stevebauman\Translation\TranslationServiceProvider;
 
-class TranslationTest extends FunctionalTestCase
+class TranslationTest extends TestCase
 {
     /**
-     * Holds the current Translation class instance
-     *
-     * @var Translation
-     */
-    protected $translation;
-
-    /**
-     * Holds the current mocked app instance
-     *
-     * @var \Mockery\MockInterface
-     */
-    protected $mockedApp;
-
-    /**
-     * Holds the current mocked config instance
-     *
-     * @var \Mockery\MockInterface
-     */
-    protected $mockedConfig;
-
-    /**
-     * Holds the current mocked session instance
-     *
-     * @var \Mockery\MockInterface
-     */
-    protected $mockedSession;
-
-    /**
-     * Holds the current mocked cache instance
-     *
-     * @var \Mockery\MockInterface
-     */
-    protected $mockedCache;
-
-    /**
-     * Setup our environment for testing
+     * Set up the test environment.
      */
     public function setUp()
     {
         parent::setUp();
 
-        $this->setMocks();
-
-        $this->mockedConfig->shouldReceive('get')->andReturnValues(array(
-            'en',
-            30,
-            array(
-                'en' => 'English',
-                'fr' => 'French',
-                'ru' => 'Russian',
-            ),
-        ));
-
-        $this->translation = new Translation(
-            $this->mockedApp,
-            $this->mockedConfig,
-            $this->mockedSession,
-            $this->mockedCache,
-            new LocaleModel,
-            new TranslationModel
-        );
+        $this->artisan('migrate', [
+            '--database' => 'testbench',
+            '--realpath' => realpath(__DIR__.'/../src/migrations'),
+        ]);
     }
 
-    private function setMocks()
+    /**
+     * Define environment setup.
+     *
+     * @param  \Illuminate\Foundation\Application  $app
+     *
+     * @return void
+     */
+    protected function getEnvironmentSetUp($app)
     {
-        $this->mockedApp = m::mock('Illuminate\Foundation\Application');
-        $this->mockedConfig = m::mock('Illuminate\Config\Repository');
-        $this->mockedSession = m::mock('Illuminate\Session\SessionManager');
-        $this->mockedCache = m::mock('Illuminate\Cache\CacheManager');
+        $app['config']->set('database.default', 'testbench');
+        $app['config']->set('database.connections.testbench', [
+            'driver'   => 'sqlite',
+            'database' => ':memory:',
+        ]);
+
+        $app['config']->set('translation.locales', [
+            'en' => 'English',
+            'fr' => 'French',
+        ]);
     }
 
-    private function prepareMockedCacheForTranslate()
+    /**
+     * Returns the package providers.
+     *
+     * @return array
+     */
+    protected function getPackageProviders()
     {
-        $this->mockedCache
-            ->shouldReceive('get')->once()->andReturn(false)
-            ->shouldReceive('has')->once()->andReturn(false)
-            ->shouldReceive('put')->once()->andReturn(false);
+        return [TranslationServiceProvider::class];
     }
 
-
-    private function prepareMockedSessionForTranslate($locale = 'en')
+    /**
+     * Returns the package aliases.
+     *
+     * @return array
+     */
+    protected function getPackageAliases()
     {
-        $this->mockedSession
-            ->shouldReceive('get')->once()->andReturn(false)
-            ->shouldReceive('set')->once()->andReturn(true)
-            ->shouldReceive('get')->once()->andReturn($locale);
+        return ['Translation' => \Stevebauman\Translation\Facades\Translation::class];
     }
 
-    private function prepareMockedAppForTranslate()
+    public function testTranslate()
     {
-        $this->mockedApp->shouldReceive('setLocale')->once()->andReturn(true);
-    }
-
-    public function testDefaultTranslate()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate();
-
-        $this->prepareMockedAppForTranslate();
-
-        $result = $this->translation->translate('test');
-
-        $this->assertEquals('test', $result);
-        $this->assertEquals('en', $this->translation->getDefaultLocale());
-
-        $locale = LocaleModel::first();
-
-        $this->assertEquals('en', $locale->code);
-
-        $translation = TranslationModel::first();
-
-        $this->assertEquals(1, $translation->locale_id);
-        $this->assertEquals('test', $translation->translation);
-    }
-
-    public function testSetLocale()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->translation->setLocale('fr');
-
-        $this->assertEquals('fr', $this->translation->getLocale());
-    }
-
-    public function testTranslateToFrench()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $result = $this->translation->translate('Testing');
-
-        $this->assertEquals('Essai', $result);
-
-        $locales = LocaleModel::get();
-
-        $this->assertEquals('fr', $locales->get(1)->code);
-        $this->assertEquals('French', $locales->get(1)->name);
-
-        $translations = TranslationModel::get();
-
-        $english = $translations->get(0);
-        $this->assertEquals(1, $english->locale_id);
-        $this->assertEquals('Testing', $english->translation);
-
-        $french = $translations->get(1);
-        $this->assertEquals(2, $french->locale_id);
-        $this->assertEquals(1, $french->translation_id);
-        $this->assertEquals('Essai', $french->translation);
-    }
-
-    public function testTranslatePlaceholders()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $result = $this->translation->translate('Hello :first_name :last_name, welcome to our website.', array(
-            'first_name' => 'John',
-            'last_name' => 'Doe'));
-
-        $this->assertEquals('Bonjour John Doe , bienvenue sur notre site .', $result);
-    }
-
-    public function testTranslateOnlyPlaceholder()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $result = $this->translation->translate(':test', array('test' => 'test'));
-
-        $this->assertEquals('test', $result);
-    }
-
-    public function testTranslateMultipleSamePlaceholders()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $result = $this->translation->translate(':name :name :name', array('name' => 'John'));
-
-        $this->assertEquals('John John John', $result);
-    }
-
-    public function testTranslatePlaceholdersWithWrongData()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $result = $this->translation->translate(':site_title :site_name', array('title' => 'Website', 'site_name' => 'test'));
-
-        $this->assertEquals(': site_title test', $result);
-    }
-
-    public function testTranslateInvalidLocaleCode()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('testing');
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->setExpectedException('Stevebauman\Translation\Exceptions\InvalidLocaleCodeException');
-
-        $this->translation->translate('test');
-    }
-
-    public function testTranslateInvalidArgumentException()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate();
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->setExpectedException('InvalidArgumentException');
-
-        $this->translation->translate(new TranslationModel);
-    }
-
-    public function testTranslateIsParent()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate();
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->translation->translate('test');
-
-        $translation = TranslationModel::find(1);
-
-        $this->assertTrue($translation->isParent());
-    }
-
-    public function testTranslateIsNotParent()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->translation->translate('test');
-
-        $translation = TranslationModel::find(2);
-
-        $this->assertFalse($translation->isParent());
-    }
-
-    public function testTranslateGetTranslationsWithParent()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->translation->translate('test');
-
-        $translation = TranslationModel::find(1);
-
-        $translations = $translation->getTranslations();
-
-        $this->assertEquals(1, $translations->count());
-        $this->assertEquals('fr', $translations->get(0)->locale->code);
-    }
-
-    public function testTranslateGetTranslationsWithoutParent()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->translation->translate('test');
-
-        $translation = TranslationModel::find(2);
-
-        $translations = $translation->getTranslations();
-
-        $this->assertFalse($translations);
-    }
-
-    public function testTranslateGetParentTranslations()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate('fr');
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->translation->translate('test');
-
-        $translation = TranslationModel::find(2);
-
-        $translations = $translation->parent->getTranslations();
-
-        $this->assertEquals(1, $translations->count());
-        $this->assertEquals('fr', $translations->get(0)->locale->code);
-    }
-
-    public function testTranslateTemporary()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate();
-
-        $this->prepareMockedAppForTranslate();
-
-        $translated = $this->translation->translate('Testing', [], 'fr');
-        $notTranslated = $this->translation->translate('Testing');
-
-        $this->assertEquals('Essai', $translated);
-        $this->assertEquals('Testing', $notTranslated);
-    }
-
-    public function testTranslateTemporaryWithReplacements()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate();
-
-        $this->prepareMockedAppForTranslate();
-
-        $translated = $this->translation->translate('Hello :name', ['name' => 'John'], 'fr');
-        $notTranslated = $this->translation->translate('Hello :name', ['name' => 'John']);
-
-        $this->assertEquals('Bonjour John', $translated);
-        $this->assertEquals('Hello John', $notTranslated);
-    }
-
-    public function testTranslateTemporaryFailure()
-    {
-        $this->prepareMockedCacheForTranslate();
-
-        $this->prepareMockedSessionForTranslate();
-
-        $this->prepareMockedAppForTranslate();
-
-        $this->setExpectedException('Stevebauman\Translation\Exceptions\InvalidLocaleCodeException');
-
-        $this->translation->translate('Testing', [], 'invalid locale');
+        $this->assertEquals('Test', Translation::translate('Test'));
     }
 }

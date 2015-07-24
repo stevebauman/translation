@@ -32,6 +32,6 @@ class Locale extends Model
      */
     public function translations()
     {
-        return $this->hasMany('Stevebauman\Translation\Models\LocaleTranslation', 'locale_id', 'id');
+        return $this->hasMany(LocaleTranslation::class, 'locale_id', 'id');
     }
 }

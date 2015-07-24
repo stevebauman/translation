@@ -2,14 +2,10 @@
 
 namespace Stevebauman\Translation;
 
-use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use Stevebauman\Translation\Models\Locale;
-use Stevebauman\Translation\Models\LocaleTranslation;
-use Stichoza\GoogleTranslate\TranslateClient;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
-use Stevebauman\Translation\Models\Locale as LocaleModel;
-use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
+use Stichoza\GoogleTranslate\TranslateClient;
+use Illuminate\Database\Eloquent\Model;
 use Illuminate\Cache\CacheManager;
 use Illuminate\Session\SessionManager;
 use Illuminate\Config\Repository;
@@ -27,14 +23,14 @@ class Translation
     /**
      * Holds the locale model.
      *
-     * @var LocaleModel
+     * @var Model
      */
     protected $localeModel;
 
     /**
      * Holds the translation model.
      *
-     * @var TranslationModel
+     * @var Model
      */
     protected $translationModel;
 
@@ -172,7 +168,7 @@ class Translation
          * Find the translation by the 'toLocale' and
          * it's parent default translation ID
          */
-        $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->id, $defaultTranslation->id);
+        $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->getKey(), $defaultTranslation->getKey());
 
         if ($translation) {
             /*
@@ -187,7 +183,7 @@ class Translation
              * we'll create a new translation record with the default
              * translation text, translate it, and return the translated text
              */
-            if ($defaultTranslation->locale_id != $toLocale->id) {
+            if ($defaultTranslation->locale_id != $toLocale->getKey()) {
                 $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
                 return $this->makeReplacements($translation->translation, $replacements);
@@ -235,9 +231,7 @@ class Translation
             return $locale;
         }
 
-        /*
-         * First session
-         */
+        // First session
         $this->setLocale($this->getDefaultLocale());
 
         return $this->getLocale();
@@ -271,7 +265,7 @@ class Translation
      *
      * @param string $text
      *
-     * @return Translation
+     * @return Model
      */
     public function getDefaultTranslation($text)
     {
@@ -335,7 +329,7 @@ class Translation
      *
      * @param string $code
      *
-     * @return static
+     * @return Model
      */
     private function firstOrCreateLocale($code)
     {
@@ -363,25 +357,26 @@ class Translation
      * @param $localeId
      * @param $parentId
      *
-     * @return mixed
+     * @return Model|null
      */
     private function findTranslationByLocaleIdAndParentId($localeId, $parentId)
     {
         return $this->translationModel
             ->where('locale_id', $localeId)
-            ->where('translation_id', $parentId)->first();
+            ->where('translation_id', $parentId)
+            ->first();
     }
 
     /**
      * Creates a translation.
      *
-     * @param Translation $locale
+     * @param Model $locale
      * @param string      $text
-     * @param Translation $parentTranslation
+     * @param Model $parentTranslation
      *
-     * @return static
+     * @return Model
      */
-    private function firstOrCreateTranslation($locale, $text, $parentTranslation = null)
+    private function firstOrCreateTranslation(Model $locale, $text, $parentTranslation = null)
     {
         /*
          * We'll check to see if there's a cached translation
@@ -455,12 +450,12 @@ class Translation
      * Retrieves the cached translation from the specified locale
      * and text.
      *
-     * @param string $locale
+     * @param Model $locale
      * @param string $text
      *
      * @return bool|string
      */
-    private function getCacheTranslation($locale, $text)
+    private function getCacheTranslation(Model $locale, $text)
     {
         $id = $this->getTranslationCacheId($locale, $text);
 
@@ -480,9 +475,9 @@ class Translation
     /**
      * Sets a cache key to the specified locale.
      *
-     * @param string $locale
+     * @param Model $locale
      */
-    private function setCacheLocale($locale)
+    private function setCacheLocale(Model $locale)
     {
         if (!$this->cache->has($locale->code)) {
             $id = sprintf($this->cacheLocaleStr, $locale->code);
@@ -494,7 +489,7 @@ class Translation
     /**
      * Retrieves a cached locale from the specified locale code.
      *
-     * @param $code
+     * @param string $code
      *
      * @return bool
      */
@@ -515,12 +510,12 @@ class Translation
      * Returns a unique translation code by compressing the text
      * using a PHP compression function.
      *
-     * @param $locale
-     * @param $text
+     * @param Model  $locale
+     * @param string $text
      *
      * @return string
      */
-    private function getTranslationCacheId($locale, $text)
+    private function getTranslationCacheId(Model $locale, $text)
     {
         $compressed = $this->compressString($text);
 
@@ -622,7 +617,9 @@ class Translation
     }
 
     /**
-     * Compresses a string. Used for storing cache keys for translations.
+     * Calculates the md5 hash of a string.
+     *
+     * Used for storing cache keys for translations.
      *
      * @param $string
      *
@@ -630,7 +627,7 @@ class Translation
      */
     private function compressString($string)
     {
-        return gzcompress($string);
+        return md5($string);
     }
 
     /**

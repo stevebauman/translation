@@ -4,13 +4,20 @@ namespace Stevebauman\Translation\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Locale.
- */
 class Locale extends Model
 {
+    /**
+     * The locales table.
+     *
+     * @var string
+     */
     protected $table = 'locales';
 
+    /**
+     * The fillable locale attributes.
+     *
+     * @var array
+     */
     protected $fillable = [
         'code',
         'lang_code',

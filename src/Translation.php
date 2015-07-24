@@ -595,7 +595,7 @@ class Translation
      */
     private function getConfigCacheTime()
     {
-        return $this->config->get('translation.cache_time');
+        return $this->config->get('translation.cache_time', $this->cacheTime);
     }
 
     /**
@@ -605,7 +605,7 @@ class Translation
      */
     private function autoTranslateEnabled()
     {
-        return $this->config->get('translation.auto_translate');
+        return $this->config->get('translation.auto_translate', true);
     }
 
     /**
@@ -615,7 +615,7 @@ class Translation
      */
     private function autoTranslateUcfirstEnabled()
     {
-        return $this->config->get('translation.auto_translate_ucfirst');
+        return $this->config->get('translation.auto_translate_ucfirst', true);
     }
 
     /**

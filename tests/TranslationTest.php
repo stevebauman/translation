@@ -64,8 +64,73 @@ class TranslationTest extends TestCase
         return ['Translation' => \Stevebauman\Translation\Facades\Translation::class];
     }
 
-    public function testTranslate()
+    public function testTranslationInvalidArgumentException()
+    {
+        $this->setExpectedException('InvalidArgumentException');
+
+        Translation::translate(['test']);
+    }
+
+    public function testTranslationDefaultLocale()
     {
         $this->assertEquals('Test', Translation::translate('Test'));
+
+        $locale = Locale::first();
+
+        $this->assertEquals('en', $locale->code);
+        $this->assertEquals('English', $locale->name);
+
+        $translation = LocaleTranslation::first();
+
+        $this->assertEquals('Test', $translation->translation);
+        $this->assertEquals($locale->getKey(), $translation->locale_id);
+    }
+
+    public function testTranslationPlaceHolders()
+    {
+        $this->assertEquals('Hi :name', Translation::translate('Hi :name'));
+        $this->assertEquals('Hi John', Translation::translate('Hi :name', ['name' => 'John']));
+
+        $translations = LocaleTranslation::get();
+
+        $this->assertEquals('Hi :name', $translations->get(0)->translation);
+        $this->assertEquals('Hi __name__', $translations->get(1)->translation);
+    }
+
+    public function testTranslationPlaceHoldersDynamicLanguage()
+    {
+        $replace = ['name' => 'John'];
+
+        $this->assertEquals('Hello John', Translation::translate('Hello :name', $replace, 'en'));
+        $this->assertEquals('Bonjour John', Translation::translate('Hello :name', $replace, 'fr'));
+    }
+
+    public function testTranslationPlaceHoldersMultiple()
+    {
+        $replace = [
+            'name' => 'John',
+            'apples' => '10',
+            'bananas' => '10',
+            'grapes' => '10',
+        ];
+
+        $expected = 'Hello John, I see you have 10 apples, 10 bananas, and 10 grapes.';
+
+        $translation = 'Hello :name, I see you have :apples apples, :bananas bananas, and :grapes grapes.';
+
+        $this->assertEquals($expected, Translation::translate($translation, $replace));
+    }
+
+    public function testTranslationPlaceHoldersMultipleOfTheSame()
+    {
+        $replace = [
+            'name' => 'Name',
+        ];
+
+        $expected = 'Name Name Name Name Name';
+
+        $translation = ':name :name :name :name :name';
+
+        $this->assertEquals($expected, Translation::translate($translation, $replace));
     }
 }

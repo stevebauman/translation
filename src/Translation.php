@@ -11,11 +11,11 @@ use Illuminate\Foundation\Application;
 class Translation
 {
     /**
-     * Holds the default application locale.
+     * Holds the application locale.
      *
      * @var string
      */
-    protected $defaultLocale = '';
+    protected $locale = '';
 
     /**
      * Holds the locale model.
@@ -96,7 +96,7 @@ class Translation
         $this->translationModel = $app->make($this->getConfigTranslationModel());
 
         // Set the default locale to the current application locale
-        $this->setDefaultLocale($this->getAppLocale());
+        $this->setLocale($this->getAppLocale());
 
         // Set the cache time from the configuration
         $this->setCacheTime($this->getConfigCacheTime());
@@ -146,10 +146,7 @@ class Translation
             $toLocale = $this->firstOrCreateLocale($this->getLocale());
         }
 
-        /*
-         * Find the translation by the 'toLocale' and
-         * it's parent default translation ID
-         */
+        // Find the translation by the 'toLocale' and it's parent default translation ID
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->getKey(), $defaultTranslation->getKey());
 
         if ($translation) {
@@ -190,16 +187,6 @@ class Translation
     }
 
     /**
-     * Retrieves the default locale property.
-     *
-     * @return string
-     */
-    public function getDefaultLocale()
-    {
-        return $this->defaultLocale;
-    }
-
-    /**
      * Returns a route prefix to automatically set a locale depending on the segment
      *
      * @return null|string
@@ -228,7 +215,7 @@ class Translation
         if($this->request->hasCookie('locale')) {
             return $this->request->cookie('locale');
         } else {
-            return $this->getDefaultLocale();
+            return $this->getAppLocale();
         }
     }
 
@@ -237,9 +224,9 @@ class Translation
      *
      * @param string $code
      */
-    public function setDefaultLocale($code = '')
+    public function setLocale($code = '')
     {
-        $this->defaultLocale = $code;
+        $this->locale = $code;
     }
 
     /**
@@ -252,7 +239,7 @@ class Translation
      */
     public function getDefaultTranslation($text)
     {
-        $locale = $this->firstOrCreateLocale($this->getDefaultLocale());
+        $locale = $this->firstOrCreateLocale($this->getAppLocale());
 
         return $this->firstOrCreateTranslation($locale, $text);
     }
@@ -292,15 +279,17 @@ class Translation
      * Make the place-holder replacements on the specified text.
      *
      * @param string $text
-     * @param array  $replace
+     * @param array  $replacements
      *
      * @return string
      */
-    private function makeReplacements($text, array $replace)
+    private function makeReplacements($text, array $replacements)
     {
-        if (count($replace) > 0) {
-            foreach ($replace as $key => $value) {
-                $text = str_replace('__'.$key.'__', $value, $text);
+        if (count($replacements) > 0) {
+            foreach ($replacements as $key => $value) {
+                $replace = '__'.$key.'__';
+
+                $text = str_replace($replace, $value, $text);
             }
         }
 
@@ -507,8 +496,6 @@ class Translation
      * @param string $code
      *
      * @return string
-     *
-     * @throws InvalidLocaleCodeException
      */
     private function getConfigLocaleByCode($code)
     {
@@ -518,9 +505,7 @@ class Translation
             return $locales[$code];
         }
 
-        $message = sprintf('Locale Code: %s is invalid, please make sure it is available in the configuration file', $code);
-
-        throw new InvalidLocaleCodeException($message);
+        return $code;
     }
 
     /**

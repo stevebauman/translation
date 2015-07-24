@@ -42,14 +42,6 @@ return [
     'auto_translate' => true,
 
     /*
-     * Runs translations through php function `ucfirst` to upper case the first
-     * letter of returned translations.
-     *
-     * @var bool
-     */
-    'auto_translate_ucfirst' => true,
-
-    /*
      * The amount of minutes to store the translations / locales in cache, default is 30 minutes
      *
      * @var int

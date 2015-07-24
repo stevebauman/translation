@@ -6,13 +6,13 @@
     "authors": [
         {
             "name": "Steve Bauman",
-            "email": "steven_bauman_7@hotmail.com"
+            "email": "steven_bauman@outlook.com"
         }
     ],
     "require": {
-        "php": ">=5.4.0",
-        "illuminate/database": "4.* | 5.*",
-        "illuminate/support": "4.* | 5.*",
+        "php": ">=5.5.9",
+        "illuminate/database": "5.*",
+        "illuminate/support": "5.*",
         "stichoza/google-translate-php": "3.0.*"
     },
     "require-dev": {

@@ -18,6 +18,15 @@ return [
 
     ],
 
+    /**
+     * Using the route prefix method of setting the locale dynamically,
+     * this integer is used to retrieve the segment to retrieve the locale code from
+     * inside the URL.
+     *
+     * @var int
+     */
+    'request_segment' => 1,
+
     /*
      * Enables use of the shorthand translation function _l($translation, $locale = NULL)
      *
@@ -48,7 +57,9 @@ return [
     'cache_time' => 30,
 
     /*
-     * The locales array for converting a locale code into the english language name
+     * The locales array for converting a locale code into the english language name.
+     *
+     * Feel free to add or remove locales you don't need.
      *
      * @var array
      */

@@ -251,13 +251,25 @@ class Translation
             $search = ':'.$key;
 
             // Replace it with __key__
-            $replace = '__'.$key.'__';
+            $replace = $this->makeTranslationSafePlaceholder($key);
 
             // Perform the replacements
             $text = str_replace($search, $replace, $text);
         }
 
         return $text;
+    }
+
+    /**
+     * Makes a placeholder by the specified key.
+     *
+     * @param string $key
+     *
+     * @return string
+     */
+    private function makeTranslationSafePlaceholder($key = '')
+    {
+        return '__'.$key.'__';
     }
 
     /**
@@ -272,7 +284,7 @@ class Translation
     {
         if (count($replacements) > 0) {
             foreach ($replacements as $key => $value) {
-                $replace = '__'.$key.'__';
+                $replace = $this->makeTranslationSafePlaceholder($key);
 
                 $text = str_replace($replace, $value, $text);
             }

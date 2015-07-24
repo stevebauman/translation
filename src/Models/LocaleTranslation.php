@@ -4,13 +4,20 @@ namespace Stevebauman\Translation\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-/**
- * Class Translation.
- */
 class LocaleTranslation extends Model
 {
+    /**
+     * The locale translations table.
+     *
+     * @var string
+     */
     protected $table = 'locale_translations';
 
+    /**
+     * The fillable locale translation attributes.
+     *
+     * @var array
+     */
     protected $fillable = [
         'locale_id',
         'translation_id',
@@ -24,7 +31,7 @@ class LocaleTranslation extends Model
      */
     public function locale()
     {
-        return $this->belongsTo('Stevebauman\Translation\Models\Locale', 'locale_id', 'id');
+        return $this->belongsTo(self::class, 'locale_id', 'id');
     }
 
     /**
@@ -34,7 +41,7 @@ class LocaleTranslation extends Model
      */
     public function parent()
     {
-        return $this->belongsTo('Stevebauman\Translation\Models\LocaleTranslation', 'translation_id');
+        return $this->belongsTo(LocaleTranslation::class, 'translation_id');
     }
 
     /**
@@ -45,7 +52,7 @@ class LocaleTranslation extends Model
      */
     public function isParent()
     {
-        if (!$this->translation_id) {
+        if (!$this->getAttribute('translation_id')) {
             return true;
         }
 
@@ -61,7 +68,7 @@ class LocaleTranslation extends Model
     public function getTranslations()
     {
         if ($this->isParent()) {
-            return $this->where('translation_id', $this->id)->get();
+            return $this->query()->where('translation_id', $this->getKey())->get();
         }
 
         return false;

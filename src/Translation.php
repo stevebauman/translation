@@ -6,9 +6,6 @@ use InvalidArgumentException;
 use Stevebauman\Translation\Exceptions\InvalidLocaleCodeException;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Cache\CacheManager;
-use Illuminate\Session\SessionManager;
-use Illuminate\Config\Repository;
 use Illuminate\Foundation\Application;
 
 class Translation
@@ -44,31 +41,23 @@ class Translation
     /**
      * Holds the current cache instance.
      *
-     * @var Repository
+     * @var \Illuminate\Config\Repository
      */
     protected $cache;
 
     /**
-     * Holds the current session instance.
-     *
-     * @var SessionManager
-     */
-    protected $session;
-
-    /**
      * Holds the current config instance.
      *
-     * @var CacheManager
+     * @var \Illuminate\Cache\CacheManager
      */
     protected $config;
 
     /**
-     * Holds the separator to access config values.
-     * This is for Laravel 4 / 5 compatibility.
+     * Holds the current request instance.
      *
-     * @var string
+     * @var \Illuminate\Http\Request
      */
-    private $configSeparator = '::';
+    protected $request;
 
     /**
      * The sprintf format to retrieve a translation from the cache.
@@ -100,20 +89,16 @@ class Translation
     {
         $this->app = $app;
         $this->config = $app->make('config');
-        $this->session = $app->make('session');
         $this->cache = $app->make('cache');
+        $this->request = $app->make('request');
 
         $this->localeModel = $app->make($this->getConfigLocaleModel());
         $this->translationModel = $app->make($this->getConfigTranslationModel());
 
-        /*
-         * Set the default locale to the current application locale
-         */
+        // Set the default locale to the current application locale
         $this->setDefaultLocale($this->getAppLocale());
 
-        /*
-         * Set the cache time from the configuration
-         */
+        // Set the cache time from the configuration
         $this->setCacheTime($this->getConfigCacheTime());
     }
 
@@ -130,10 +115,7 @@ class Translation
      */
     public function translate($text = '', $replacements = [], $toLocale = '')
     {
-        /*
-         * Make sure $text is actually a string and not
-         * and object / int
-         */
+        // Make sure $text is actually a string and not and object / int
         $this->validateText($text);
 
         /*
@@ -218,6 +200,24 @@ class Translation
     }
 
     /**
+     * Returns a route prefix to automatically set a locale depending on the segment
+     *
+     * @return null|string
+     */
+    public function getRoutePrefix()
+    {
+        $locale = $this->request->segment($this->getConfigRequestSegment());
+
+        $locales = $this->getConfigLocales();
+
+        if(in_array($locale, array_keys($locales))) {
+            return $locale;
+        }
+
+        return null;
+    }
+
+    /**
      * Retrieves the current locale from the session. If a locale
      * isn't set then the default app locale is set as the current locale.
      *
@@ -225,16 +225,11 @@ class Translation
      */
     public function getLocale()
     {
-        $locale = $this->session->get('locale');
-
-        if ($locale) {
-            return $locale;
+        if($this->request->hasCookie('locale')) {
+            return $this->request->cookie('locale');
+        } else {
+            return $this->getDefaultLocale();
         }
-
-        // First session
-        $this->setLocale($this->getDefaultLocale());
-
-        return $this->getLocale();
     }
 
     /**
@@ -245,18 +240,6 @@ class Translation
     public function setDefaultLocale($code = '')
     {
         $this->defaultLocale = $code;
-    }
-
-    /**
-     * Sets the current locale in the session as well as the application.
-     *
-     * @param string $code
-     */
-    public function setLocale($code = '')
-    {
-        $this->session->set('locale', $code);
-
-        $this->app->setLocale($code);
     }
 
     /**
@@ -370,9 +353,9 @@ class Translation
     /**
      * Creates a translation.
      *
-     * @param Model $locale
-     * @param string      $text
-     * @param Model $parentTranslation
+     * @param Model  $locale
+     * @param string $text
+     * @param Model  $parentTranslation
      *
      * @return Model
      */
@@ -574,6 +557,16 @@ class Translation
     public function getConfigTranslationModel()
     {
         return $this->config->get('translation.models.translation', Models\LocaleTranslation::class);
+    }
+
+    /**
+     * Returns the request segment to retrieve the locale from.
+     *
+     * @return int
+     */
+    public function getConfigRequestSegment()
+    {
+        return $this->config->get('translation.request_segment', 1);
     }
 
     /**

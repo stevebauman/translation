@@ -2,6 +2,7 @@
 
 namespace Stevebauman\Translation;
 
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Stevebauman\Translation\Models\Locale;
 use Stevebauman\Translation\Models\LocaleTranslation;
@@ -289,12 +290,12 @@ class Translation
      * Into:
      *      __name__
      *
-     * @param $text
-     * @param array $replace
+     * @param string $text
+     * @param array  $replace
      *
      * @return mixed
      */
-    private function makeTranslationSafePlaceholders($text, array $replace)
+    private function makeTranslationSafePlaceholders($text, array $replace = [])
     {
         foreach ($replace as $key => $value) {
             // Search for :key
@@ -303,6 +304,7 @@ class Translation
             // Replace it with __key__
             $replace = '__'.$key.'__';
 
+            // Perform the replacements
             $text = str_replace($search, $replace, $text);
         }
 
@@ -424,14 +426,12 @@ class Translation
         }
 
         $translation = $this->translationModel->firstOrCreate([
-            'locale_id' => $locale->id,
-            'translation_id' => (isset($parentTranslation) ? $parentTranslation->id  : null),
+            'locale_id' => $locale->getKey(),
+            'translation_id' => (isset($parentTranslation) ? $parentTranslation->getKey()  : null),
             'translation' => $text,
         ]);
 
-        /*
-         * Cache the translation so it's retrieved faster next time
-         */
+        // Cache the translation so it's retrieved faster next time
         $this->setCacheTranslation($translation);
 
         return $translation;
@@ -440,9 +440,9 @@ class Translation
     /**
      * Sets a cache key to the specified locale and text.
      *
-     * @param $translation
+     * @param Model $translation
      */
-    private function setCacheTranslation($translation)
+    private function setCacheTranslation(Model $translation)
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
@@ -455,8 +455,8 @@ class Translation
      * Retrieves the cached translation from the specified locale
      * and text.
      *
-     * @param $locale
-     * @param $text
+     * @param string $locale
+     * @param string $text
      *
      * @return bool|string
      */
@@ -480,7 +480,7 @@ class Translation
     /**
      * Sets a cache key to the specified locale.
      *
-     * @param $locale
+     * @param string $locale
      */
     private function setCacheLocale($locale)
     {
@@ -530,9 +530,9 @@ class Translation
     /**
      * Returns a the english name of the locale code entered from the config file.
      *
-     * @param $code
+     * @param string $code
      *
-     * @return mixed
+     * @return string
      *
      * @throws InvalidLocaleCodeException
      */
@@ -552,7 +552,7 @@ class Translation
     /**
      * Sets the time to store the translations and locales in cache.
      *
-     * @param $time
+     * @param int $time
      */
     private function setCacheTime($time)
     {

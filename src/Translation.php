@@ -397,10 +397,6 @@ class Translation
                  */
                 $text = $parentTranslation->translation;
             }
-
-            if ($this->autoTranslateUcfirstEnabled()) {
-                $text = ucfirst($text);
-            }
         }
 
         $translation = $this->translationModel->firstOrCreate([
@@ -597,16 +593,6 @@ class Translation
     private function autoTranslateEnabled()
     {
         return $this->config->get('translation.auto_translate', true);
-    }
-
-    /**
-     * Returns the auto translate ucfirst configuration option.
-     *
-     * @return bool
-     */
-    private function autoTranslateUcfirstEnabled()
-    {
-        return $this->config->get('translation.auto_translate_ucfirst', true);
     }
 
     /**

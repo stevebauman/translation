@@ -1,5 +1,7 @@
 <?php
 
+use Illuminate\Support\Facades\App;
+
 /**
  * The Helpers.php file for Stevebauman/Translation.
  */
@@ -16,7 +18,7 @@ if (Config::get('translation::shorthand_enabled') || Config::get('translation.sh
          */
         function _t($text, $replacements = [], $toLocale = '')
         {
-            return Translation::translate($text, $replacements, $toLocale);
+            return App::make('translation')->translate($text, $replacements, $toLocale);
         }
     }
 }

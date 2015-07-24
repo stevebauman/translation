@@ -2,8 +2,7 @@
 
 namespace Stevebauman\Translation;
 
-use Stevebauman\Translation\Models\LocaleTranslation as TranslationModel;
-use Stevebauman\Translation\Models\Locale as LocaleModel;
+use Blade;
 use Illuminate\Support\ServiceProvider;
 
 class TranslationServiceProvider extends ServiceProvider
@@ -16,35 +15,32 @@ class TranslationServiceProvider extends ServiceProvider
     protected $defer = false;
 
     /**
+     * Set up the blade directive.
+     */
+    public function boot()
+    {
+        Blade::directive('t', function($expression) {
+            return "<?php echo _t{$expression}; ?>";
+        });
+    }
+
+    /**
      * Register the service provider.
      *
      * @method void package(string $package, string $namespace, string $path)
      */
     public function register()
     {
-        /*
-         * If the package method exists, we're using Laravel 4, if not then we're
-         * definitely on laravel 5
-         */
-        if (method_exists($this, 'package')) {
-            $this->package('stevebauman/translation', 'translation', __DIR__);
-        } else {
-            $this->publishes([
-                __DIR__.'/config/config.php' => config_path('translation.php'),
-            ], 'config');
+        $this->publishes([
+            __DIR__.'/config/config.php' => config_path('translation.php'),
+        ], 'config');
 
-            $this->publishes([
-                __DIR__.'/migrations/' => base_path('/database/migrations'),
-            ], 'migrations');
-        }
+        $this->publishes([
+            __DIR__.'/migrations/' => base_path('/database/migrations'),
+        ], 'migrations');
 
-        /*
-         * Construct a new Translation instance and inject the application config, session, and cache.
-         *
-         * Also passing in new instances of the locale model and translation model for automatic record creation
-         */
-        $this->app['translation'] = $this->app->share(function ($app) {
-            return new Translation($app, $app['config'], $app['session'], $app['cache'], new LocaleModel(), new TranslationModel());
+        $this->app->bind('translation', function($app) {
+            return new Translation($app);
         });
 
         /*

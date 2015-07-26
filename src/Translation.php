@@ -147,7 +147,7 @@ class Translation
              * we'll create a new translation record with the default
              * translation text, translate it, and return the translated text
              */
-            if ($defaultTranslation->locale_id != $toLocale->getKey()) {
+            if ($defaultTranslation->getAttribute('locale_id') != $toLocale->getKey()) {
                 $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
                 return $this->makeReplacements($translation->translation, $replacements);

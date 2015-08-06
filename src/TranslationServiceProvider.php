@@ -43,23 +43,17 @@ class TranslationServiceProvider extends ServiceProvider
             return new Translation($app);
         });
 
-        /*
-         * Bind the translation scan command for artisan
-         */
+        // Bind the translation scan command for artisan
         $this->app->bind('translation:scan', function ($app) {
             return new Commands\ScanCommand($app['translation']);
         });
 
-        /*
-         * Register the commands
-         */
+        // Register the commands
         $this->commands([
             'translation:scan',
         ]);
 
-        /*
-         * Include the helpers file for global `_t()` function
-         */
+        // Include the helpers file for global `_t()` function
         include __DIR__.'/helpers.php';
     }
 

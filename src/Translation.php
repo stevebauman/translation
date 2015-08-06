@@ -103,28 +103,21 @@ class Translation
         // Make sure $text is actually a string and not and object / int
         $this->validateText($text);
 
-        /*
-         * If there are replacements inside the array we need to convert them
-         * into google translate safe placeholders. ex :name to __name__
-         */
+        // If there are replacements inside the array we need to convert them
+        // into google translate safe placeholders. ex :name to __name__
         if (count($replacements) > 0) {
             $text = $this->makeTranslationSafePlaceholders($text, $replacements);
         }
 
-        /*
-         * Get the default translation text. This will insert
-         * the translation and the default application locale
-         * if they don't exist using firstOrCreate
-         */
+        // Get the default translation text. This will insert the translation
+        // and the default application locale if they don't
+        // exist using firstOrCreate
         $defaultTranslation = $this->getDefaultTranslation($text);
 
-        /*
-         * If a toLocale has been provided, we're only translating
-         * a single string, so we won't call the getLocale method
-         * as it retrieves and sets the default session locale.
-         * If it has not been provided, we'll get the default
-         * locale, and set it on the current session.
-         */
+        // If a toLocale has been provided, we're only translating a single string, so
+        // we won't call the getLocale method as it retrieves and sets the default
+        // session locale. If it has not been provided, we'll get the
+        // default locale, and set it on the current session.
         if ($toLocale) {
             $toLocale = $this->firstOrCreateLocale($toLocale);
         } else {
@@ -135,28 +128,22 @@ class Translation
         $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->getKey(), $defaultTranslation->getKey());
 
         if ($translation) {
-            /*
-             * A translation was found, we'll return it,
-             * but we need to make the final placeholder
-             * replacements if they exist
-             */
+            // A translation was found, we'll return it, but we need to make
+            // the final placeholder replacements if they exist
             return $this->makeReplacements($translation->translation, $replacements);
         } else {
-            /*
-             * If the default translation locale doesn't equal the locale to translate to,
-             * we'll create a new translation record with the default
-             * translation text, translate it, and return the translated text
-             */
+            // If the default translation locale doesn't equal the locale to
+            // translate to, we'll create a new translation record with
+            // the default translation text, translate it,
+            // and return the translated text
             if ($defaultTranslation->getAttribute('locale_id') != $toLocale->getKey()) {
                 $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
                 return $this->makeReplacements($translation->translation, $replacements);
             }
 
-            /*
-             * Looks like we're on our default application locale.
-             * We'll return default locale translation
-             */
+            // Looks like we're on our default application locale.
+            // We'll return default locale translation
             return $this->makeReplacements($defaultTranslation->translation, $replacements);
         }
     }

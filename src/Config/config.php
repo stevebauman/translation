@@ -95,8 +95,10 @@ return [
     | Locales
     |--------------------------------------------------------------------------
     |
-    | The locales array for converting a locale code into the
-    | english language name.
+    | The locales array is used for allowing only certain locales to
+    | be located inside the route segment for `Translation::getRoutePrefix()`.
+    |
+    | The list is also used for converting locale codes to locale names.
     |
     | Feel free to add or remove locales you don't need.
     |

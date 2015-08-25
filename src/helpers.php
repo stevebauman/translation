@@ -2,7 +2,7 @@
 
 use Illuminate\Support\Facades\App;
 
-if (Config::get('translation::shorthand_enabled') || Config::get('translation.shorthand_enabled')) {
+if (Config::get('translation.shorthand_enabled')) {
     if (!function_exists('_t')) {
         /**
          * Shorthand function for translating text.

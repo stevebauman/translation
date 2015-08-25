@@ -256,7 +256,7 @@ class Translation
      */
     private function makeTranslationSafePlaceholder($key = '')
     {
-        return '__'.$key.'__';
+        return '___'.strtolower($key).'___';
     }
 
     /**
@@ -273,7 +273,7 @@ class Translation
             foreach ($replacements as $key => $value) {
                 $replace = $this->makeTranslationSafePlaceholder($key);
 
-                $text = str_replace($replace, $value, $text);
+                $text = str_ireplace($replace, $value, $text);
             }
         }
 

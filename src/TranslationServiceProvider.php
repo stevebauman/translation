@@ -2,7 +2,7 @@
 
 namespace Stevebauman\Translation;
 
-use Blade;
+use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
 class TranslationServiceProvider extends ServiceProvider
@@ -31,27 +31,20 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function register()
     {
+        // Allow configuration to be publishable
         $this->publishes([
             __DIR__.'/Config/config.php' => config_path('translation.php'),
         ], 'config');
 
+        // Allow migrations to be publishable
         $this->publishes([
             __DIR__.'/Migrations/' => base_path('/database/migrations'),
         ], 'migrations');
 
+        // Bind translation to the IoC
         $this->app->bind('translation', function($app) {
             return new Translation($app);
         });
-
-        // Bind the translation scan command for artisan
-        $this->app->bind('translation:scan', function ($app) {
-            return new Commands\ScanCommand($app['translation']);
-        });
-
-        // Register the commands
-        $this->commands([
-            'translation:scan',
-        ]);
 
         // Include the helpers file for global `_t()` function
         include __DIR__.'/helpers.php';

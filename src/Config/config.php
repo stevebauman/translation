@@ -34,7 +34,7 @@ return [
         |
         */
 
-        'translation' => Stevebauman\Translation\Models\LocaleTranslation::class,
+        'translation' => Stevebauman\Translation\Models\Translation::class,
 
     ],
 

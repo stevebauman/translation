@@ -2,10 +2,13 @@
 
 namespace Stevebauman\Translation\Models;
 
+use Stevebauman\Translation\Traits\LocaleTrait;
 use Illuminate\Database\Eloquent\Model;
 
 class Locale extends Model
 {
+    use LocaleTrait;
+
     /**
      * The locales table.
      *
@@ -26,12 +29,10 @@ class Locale extends Model
     ];
 
     /**
-     * The hasMany translations relationship.
-     *
-     * @return \Illuminate\Database\Eloquent\Relations\HasMany
+     * {@inheritdoc]
      */
     public function translations()
     {
-        return $this->hasMany(LocaleTranslation::class, 'locale_id', 'id');
+        return $this->hasMany(Translation::class);
     }
 }

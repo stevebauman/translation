@@ -123,7 +123,7 @@ In your `locales` database table you'll have:
     | id | code |  name  | display_name | lang_code |
        1    en    English      NULL          NULL
 
-In your `locale_translations` database table you'll have:
+In your `translations` database table you'll have:
 
     | id | locale_id | translation_id | translation |
       1        NULL         NULL        'Translate me!'
@@ -142,7 +142,7 @@ Now, once you visit the page you'll have this in your `locales` table:
        1    en    English     NULL         NULL
        2    fr    French      NULL         NULL
 
-And this in your `locale_translations` table:
+And this in your `translations` table:
 
     | id | locale_id | translation_id | translation |
        1        1         NULL        'Translate me!'
@@ -188,7 +188,39 @@ You must provide you're own way of updating translations (controllers/views etc)
 
 ## Routes
 
+Translating your site with a locale prefix couldn't be easier. First inside your `app/Http/Kernel.php` file, insert
+the locale middleware:
 
+    /**
+     * The application's route middleware.
+     *
+     * @var array
+     */
+    protected $routeMiddleware = [
+        'auth' => \App\Http\Middleware\Authenticate::class,
+        'auth.basic' => \Illuminate\Auth\Middleware\AuthenticateWithBasicAuth::class,
+        'guest' => \App\Http\Middleware\RedirectIfAuthenticated::class,
+        
+        // Insert Locale Middleware
+        'locale' => \Stevebauman\Translation\Middleware\LocaleMiddleware::class
+    ];
+
+Now, in your `app/Http/routes.php` file, insert the middleware and the following Translation method in the route
+group prefix like so:
+
+    Route::group(['prefix' => Translation::getRoutePrefix(), 'middleware' => ['locale']], function()
+    {
+        Route::get('home', function ()
+        {
+            return view('home');
+        });
+    });
+
+You should now be able to access routes such as:
+
+    http://localhost/home
+    http://localhost/en/home
+    http://localhost/fr/home
 
 ## Automatic Translation
 

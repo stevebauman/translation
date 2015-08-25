@@ -140,4 +140,18 @@ class TranslationTest extends TestCase
 
         $this->assertEquals($expected, Translation::translate($translation, $replace));
     }
+
+    public function testTranslationPlaceHoldersCaseInsensitivity()
+    {
+        $replace = [
+            'name' => 'John',
+            'NAME' => 'Test',
+        ];
+
+        $translation = ':name :NAME';
+
+        $expected = 'John John';
+
+        $this->assertEquals($expected, Translation::translate($translation, $replace));
+    }
 }

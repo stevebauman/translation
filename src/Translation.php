@@ -334,20 +334,17 @@ class Translation
      */
     private function firstOrCreateTranslation(Model $locale, $text, $parentTranslation = null)
     {
-        /*
-         * We'll check to see if there's a cached translation
-         * first before we try and hit the database
-         */
+        // We'll check to see if there's a cached translation
+        // first before we try and hit the database
         $cachedTranslation = $this->getCacheTranslation($locale, $text);
 
         if ($cachedTranslation) {
             return $cachedTranslation;
         }
 
-        /*
-         * Check if auto translation is enabled. If so we'll run
-         * the text through google translate and save it, then cache it.
-         */
+        // Check if auto translation is enabled. If so we'll run
+        // the text through google translate and
+        // save it, then cache it.
         if ($parentTranslation && $this->autoTranslateEnabled()) {
             $googleTranslate = new TranslateClient();
 
@@ -357,17 +354,13 @@ class Translation
             try {
                 $text = $googleTranslate->translate($text);
             } catch (\ErrorException $e) {
-                /*
-                 * Request to translate failed, set
-                 * the text to the parent translation
-                 */
+                // Request to translate failed, set the text
+                // to the parent translation
                 $text = $parentTranslation->translation;
             } catch (\UnexpectedValueException $e) {
-                /*
-                 * Looks like something other than text was
-                 * passed in, we'll set the text to the parent
-                 * translation for this exception as well
-                 */
+                // Looks like something other than text was passed in,
+                // we'll set the text to the parent translation
+                // for this exception as well
                 $text = $parentTranslation->translation;
             }
         }

@@ -52,7 +52,7 @@ Seen:
 
     Bienvenue sur notre page d'accueil
 
-We can even use placeholders for dynamic content (added in `v1.1.0`)
+We can even use placeholders for dynamic content
 
 View:
 
@@ -72,7 +72,7 @@ path:
 
 Require translation in your composer.json file
 
-    "stevebauman/translation": "1.2.*"
+    "stevebauman/translation": "1.3.*"
     
 Then run the composer update command on your project source
 

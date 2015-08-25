@@ -3,8 +3,8 @@
 namespace Stevebauman\Translation\Tests;
 
 use Orchestra\Testbench\TestCase;
-use Stevebauman\Translation\Models\Locale;
-use Stevebauman\Translation\Models\LocaleTranslation;
+use Stevebauman\Translation\Models\Locale as LocaleModel;
+use Stevebauman\Translation\Models\Translation as TranslationModel;
 use Stevebauman\Translation\Facades\Translation;
 use Stevebauman\Translation\TranslationServiceProvider;
 
@@ -82,12 +82,12 @@ class TranslationTest extends TestCase
     {
         $this->assertEquals('Test', Translation::translate('Test'));
 
-        $locale = Locale::first();
+        $locale = LocaleModel::first();
 
         $this->assertEquals('en', $locale->code);
         $this->assertEquals('English', $locale->name);
 
-        $translation = LocaleTranslation::first();
+        $translation = TranslationModel::first();
 
         $this->assertEquals('Test', $translation->translation);
         $this->assertEquals($locale->getKey(), $translation->locale_id);
@@ -98,7 +98,7 @@ class TranslationTest extends TestCase
         $this->assertEquals('Hi :name', Translation::translate('Hi :name'));
         $this->assertEquals('Hi John', Translation::translate('Hi :name', ['name' => 'John']));
 
-        $translations = LocaleTranslation::get();
+        $translations = TranslationModel::get();
 
         $this->assertEquals('Hi :name', $translations->get(0)->translation);
         $this->assertEquals('Hi __name__', $translations->get(1)->translation);

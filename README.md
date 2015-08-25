@@ -186,6 +186,117 @@ Performing this will also create the locale in your database, save the translati
 
 You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.
 
+## Models
+
+By default, two models are included and selected inside the configuration file. If you'd like to use your own models
+you must create them and implement their trait. Here's an example:
+
+The Locale Model:
+    
+    use Stevebauman\Translation\Traits\LocaleTrait;
+    use Illuminate\Database\Eloquent\Model;
+    
+    class Locale extends Model
+    {
+        use LocaleTrait;
+    
+        /**
+         * The locales table.
+         *
+         * @var string
+         */
+        protected $table = 'locales';
+    
+        /**
+         * The fillable locale attributes.
+         *
+         * @var array
+         */
+        protected $fillable = [
+            'code',
+            'lang_code',
+            'name',
+            'display_name',
+        ];
+    
+        /**
+         * {@inheritdoc]
+         */
+        public function translations()
+        {
+            return $this->hasMany(Translation::class);
+        }
+    }
+
+The Translation Model:
+
+    use Stevebauman\Translation\Traits\TranslationTrait;
+    use Illuminate\Database\Eloquent\Model;
+    
+    class Translation extends Model
+    {
+        use TranslationTrait;
+    
+        /**
+         * The locale translations table.
+         *
+         * @var string
+         */
+        protected $table = 'translations';
+    
+        /**
+         * The fillable locale translation attributes.
+         *
+         * @var array
+         */
+        protected $fillable = [
+            'locale_id',
+            'translation_id',
+            'translation',
+        ];
+    
+        /**
+         * {@inheritdoc}
+         */
+        public function locale()
+        {
+            return $this->belongsTo(Locale::class);
+        }
+    
+        /**
+         * {@inheritdoc}
+         */
+        public function parent()
+        {
+            return $this->belongsTo(self::class);
+        }
+    }
+
+Once you've created these models, insert them into the `translation.php` configuration file:
+
+    /*
+    |--------------------------------------------------------------------------
+    | Locale Model
+    |--------------------------------------------------------------------------
+    |
+    |  The locale model is used for storing locales such as `en` or `fr`.
+    |
+    */
+
+    'locale' => App\Models\Locale::class,
+
+
+    /*
+    |--------------------------------------------------------------------------
+    | Translation Model
+    |--------------------------------------------------------------------------
+    |
+    |  The translation model is used for storing translations.
+    |
+    */
+
+    'translation' => App\Models\Translation::class,
+
 ## Routes
 
 Translating your site with a locale prefix couldn't be easier. First inside your `app/Http/Kernel.php` file, insert
@@ -229,33 +340,6 @@ Automatic translation is enabled by default in the configuration file. It utiliz
 Using automatic translation will send the inserted text to google and save the returned text to the database. Once a 
 translation is saved in the database, it is never sent back to google to get re-translated. This means 
 that you don't have to worry about hitting a cap that google may impose. You effectively <b>own</b> that translation.
-
-## Commands
-
-#### Scan
-
-The scan command accepts one argument (directory) and one option (locale). It will look through each file in the directory
-given and add the translation in the database that has the format of:
-
-    _t('')
-    _t("")
-    Translation::translate('')
-    Translation::translate("")
-
-To perform the scan, use artisan like so:
-
-    php artisan translation:scan directory --locale="code"
-
-Specifying the directory is mandatory.
-
-For example, to scan your views directory, use:
-
-    php artisan translation:scan app/views --locale="en"
-   
-If you specify a locale, it will add all the translations for the app locale, as well as the specified locale.
-
-For example if your default app locale was 'en', and you supply 'fr' to the locale option, it will generate the translation records
-for both locales.
 
 ## Questions / Concerns
 

@@ -177,8 +177,8 @@ class Translation
     }
 
     /**
-     * Retrieves the current locale from the session. If a locale
-     * isn't set then the default app locale is set as the current locale.
+     * Retrieves the current locale from the session. If a locale isn't
+     * set then the default app locale is set as the current locale.
      *
      * @return string
      */

@@ -2,9 +2,6 @@
 
 use Illuminate\Support\Facades\App;
 
-/**
- * The Helpers.php file for Stevebauman/Translation.
- */
 if (Config::get('translation::shorthand_enabled') || Config::get('translation.shorthand_enabled')) {
     if (!function_exists('_t')) {
         /**

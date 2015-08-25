@@ -136,7 +136,7 @@ class Translation
             // translate to, we'll create a new translation record with
             // the default translation text, translate it,
             // and return the translated text
-            if ($defaultTranslation->getAttribute('locale_id') != $toLocale->getKey()) {
+            if ($defaultTranslation->getAttribute($this->localeModel->getForeignKey()) != $toLocale->getKey()) {
                 $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
 
                 return $this->makeReplacements($translation->translation, $replacements);
@@ -165,11 +165,11 @@ class Translation
      */
     public function getRoutePrefix()
     {
-        $locale = $this->request->segment($this->getConfigRequestSegment());
+        $locale =  $this->request->segment($this->getConfigRequestSegment());
 
         $locales = $this->getConfigLocales();
 
-        if(in_array($locale, array_keys($locales))) {
+        if(is_array($locales) && in_array($locale, array_keys($locales))) {
             return $locale;
         }
 
@@ -318,8 +318,8 @@ class Translation
     private function findTranslationByLocaleIdAndParentId($localeId, $parentId)
     {
         return $this->translationModel
-            ->where('locale_id', $localeId)
-            ->where('translation_id', $parentId)
+            ->where($this->localeModel->getForeignKey(), $localeId)
+            ->where($this->translationModel->getForeignKey(), $parentId)
             ->first();
     }
 
@@ -366,8 +366,8 @@ class Translation
         }
 
         $translation = $this->translationModel->firstOrCreate([
-            'locale_id' => $locale->getKey(),
-            'translation_id' => (isset($parentTranslation) ? $parentTranslation->getKey()  : null),
+            $locale->getForeignKey() => $locale->getKey(),
+            $this->translationModel->getForeignKey() => (isset($parentTranslation) ? $parentTranslation->getKey()  : null),
             'translation' => $text,
         ]);
 
@@ -425,7 +425,7 @@ class Translation
     private function setCacheLocale(Model $locale)
     {
         if (!$this->cache->has($locale->code)) {
-            $id = sprintf('translation::%s', $locale->code);
+            $id = sprintf('translation.%s', $locale->code);
 
             $this->cache->put($id, $locale, $this->cacheTime);
         }
@@ -440,7 +440,7 @@ class Translation
      */
     private function getCacheLocale($code)
     {
-        $id = sprintf('translation::%s', $code);
+        $id = sprintf('translation.%s', $code);
 
         if($this->cache->has($id)) {
             return $this->cache->get($id);
@@ -462,7 +462,7 @@ class Translation
     {
         $compressed = $this->compressString($text);
 
-        return sprintf('translation::%s.%s', $locale->code, $compressed);
+        return sprintf('translation.%s.%s', $locale->code, $compressed);
     }
 
     /**
@@ -512,7 +512,7 @@ class Translation
      */
     public function getConfigTranslationModel()
     {
-        return $this->config->get('translation.models.translation', Models\LocaleTranslation::class);
+        return $this->config->get('translation.models.translation', Models\Translation::class);
     }
 
     /**

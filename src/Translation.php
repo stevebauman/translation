@@ -233,15 +233,17 @@ class Translation
      */
     private function makeTranslationSafePlaceholders($text, array $replace = [])
     {
-        foreach ($replace as $key => $value) {
-            // Search for :key
-            $search = ':'.$key;
+        if(count($replace) > 0) {
+            foreach ($replace as $key => $value) {
+                // Search for :key
+                $search = ':'.$key;
 
-            // Replace it with __key__
-            $replace = $this->makeTranslationSafePlaceholder($key);
+                // Replace it with __key__
+                $replace = $this->makeTranslationSafePlaceholder($key);
 
-            // Perform the replacements
-            $text = str_replace($search, $replace, $text);
+                // Perform the replacements
+                $text = str_replace($search, $replace, $text);
+            }
         }
 
         return $text;

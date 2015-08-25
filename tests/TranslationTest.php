@@ -101,7 +101,7 @@ class TranslationTest extends TestCase
         $translations = TranslationModel::get();
 
         $this->assertEquals('Hi :name', $translations->get(0)->translation);
-        $this->assertEquals('Hi __name__', $translations->get(1)->translation);
+        $this->assertEquals('Hi ___name___', $translations->get(1)->translation);
     }
 
     public function testTranslationPlaceHoldersDynamicLanguage()

@@ -19,8 +19,8 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Blade::directive('t', function($expression) {
-            return "<?php echo App::make('translation')->translate{$expression}; ?>";
+        Blade::directive('t', function($args) {
+            return "<?php echo App::make('translation')->translate{$args}; ?>";
         });
     }
 

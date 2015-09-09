@@ -81,7 +81,7 @@ class Translation
         $this->translationModel = $app->make($this->getConfigTranslationModel());
 
         // Set the default locale to the current application locale
-        $this->setLocale($this->getAppLocale());
+        $this->setLocale($this->getConfigDefaultLocale());
 
         // Set the cache time from the configuration
         $this->setCacheTime($this->getConfigCacheTime());
@@ -151,6 +151,8 @@ class Translation
     /**
      * Retrieves the current app's default locale.
      *
+     * @depreciated
+     *
      * @return string
      */
     public function getAppLocale()
@@ -187,7 +189,7 @@ class Translation
         if($this->request->hasCookie('locale')) {
             return $this->request->cookie('locale');
         } else {
-            return $this->getAppLocale();
+            return $this->getConfigDefaultLocale();
         }
     }
 
@@ -211,7 +213,7 @@ class Translation
      */
     public function getDefaultTranslation($text)
     {
-        $locale = $this->firstOrCreateLocale($this->getAppLocale());
+        $locale = $this->firstOrCreateLocale($this->getConfigDefaultLocale());
 
         return $this->firstOrCreateTranslation($locale, $text);
     }
@@ -498,6 +500,16 @@ class Translation
     }
 
     /**
+     * Returns the default locale from the configuration.
+     *
+     * @return string
+     */
+    private function getConfigDefaultLocale()
+    {
+        return $this->config->get('translation.default_locale', 'en');
+    }
+
+    /**
      * Returns the locale model from the configuration.
      *
      * @return string
@@ -512,7 +524,7 @@ class Translation
      *
      * @return string
      */
-    public function getConfigTranslationModel()
+    private function getConfigTranslationModel()
     {
         return $this->config->get('translation.models.translation', Models\Translation::class);
     }
@@ -522,7 +534,7 @@ class Translation
      *
      * @return int
      */
-    public function getConfigRequestSegment()
+    private function getConfigRequestSegment()
     {
         return $this->config->get('translation.request_segment', 1);
     }

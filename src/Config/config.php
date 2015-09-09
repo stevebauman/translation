@@ -92,6 +92,20 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Default Locale
+    |--------------------------------------------------------------------------
+    |
+    | The default application locale you would like to translate strings from.
+    |
+    | For example, if you choose `en` as the default locale, then all strings
+    | will be translated from english, to the new set locale.
+    |
+    */
+
+    'default_locale' => 'en',
+
+    /*
+    |--------------------------------------------------------------------------
     | Locales
     |--------------------------------------------------------------------------
     |

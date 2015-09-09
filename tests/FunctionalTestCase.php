@@ -46,7 +46,7 @@ class FunctionalTestCase extends TestCase
      *
      * @return array
      */
-    protected function getPackageProviders()
+    protected function getPackageProviders($app)
     {
         return [TranslationServiceProvider::class];
     }
@@ -56,7 +56,7 @@ class FunctionalTestCase extends TestCase
      *
      * @return array
      */
-    protected function getPackageAliases()
+    protected function getPackageAliases($app)
     {
         return ['Translation' => \Stevebauman\Translation\Facades\Translation::class];
     }

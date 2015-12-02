@@ -124,28 +124,22 @@ class Translation
             $toLocale = $this->firstOrCreateLocale($this->getLocale());
         }
 
-        // Find the translation by the 'toLocale' and it's parent default translation ID
-        $translation = $this->findTranslationByLocaleIdAndParentId($toLocale->getKey(), $defaultTranslation->getKey());
-
-        if ($translation) {
-            // A translation was found, we'll return it, but we need to make
-            // the final placeholder replacements if they exist
-            return $this->makeReplacements($translation->translation, $replacements);
-        } else {
-            // If the default translation locale doesn't equal the locale to
-            // translate to, we'll create a new translation record with
-            // the default translation text, translate it,
-            // and return the translated text
-            if ($defaultTranslation->getAttribute($this->localeModel->getForeignKey()) != $toLocale->getKey()) {
-                $translation = $this->firstOrCreateTranslation($toLocale, $defaultTranslation->translation, $defaultTranslation);
-
-                return $this->makeReplacements($translation->translation, $replacements);
-            }
-
-            // Looks like we're on our default application locale.
-            // We'll return default locale translation
+        // Check if translation is requested for default locale.
+        // If it is default locale we can just return default translation.
+        if ($defaultTranslation->getAttribute($this->localeModel->getForeignKey()) == $toLocale->getKey()) {
             return $this->makeReplacements($defaultTranslation->translation, $replacements);
         }
+
+        // Since we are not on default translation locale, we will have to
+        // create (or get first) translation for provided locale where
+        // parent translation is our default translation.
+        $translation = $this->firstOrCreateTranslation(
+            $toLocale,
+            $defaultTranslation->translation,
+            $defaultTranslation
+        );
+
+        return $this->makeReplacements($translation->translation, $replacements);
     }
 
     /**
@@ -309,22 +303,6 @@ class Translation
         $this->setCacheLocale($locale);
 
         return $locale;
-    }
-
-    /**
-     * Returns the translation from the parent records.
-     *
-     * @param int $localeId
-     * @param int $parentId
-     *
-     * @return Model|null
-     */
-    private function findTranslationByLocaleIdAndParentId($localeId, $parentId)
-    {
-        return $this->translationModel
-            ->where($this->localeModel->getForeignKey(), $localeId)
-            ->where($this->translationModel->getForeignKey(), $parentId)
-            ->first();
     }
 
     /**

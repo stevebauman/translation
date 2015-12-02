@@ -2,6 +2,7 @@
 
 namespace Stevebauman\Translation\Tests;
 
+use Illuminate\Support\Facades\Cache;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\Translation as TranslationModel;
 use Stevebauman\Translation\Facades\Translation;
@@ -98,4 +99,52 @@ class TranslationTest extends FunctionalTestCase
 
         $this->assertEquals($expected, Translation::translate($translation, $replace));
     }
+
+    public function testTranslationCachingWithDefaultLocale()
+    {
+        $this->app['config']['app.locale'] = 'en';
+        $this->app['config']['translation.auto_translate'] = false;
+
+        $text = 'Hello there!';
+
+        $this->assertCachingIsWorking($text, [], 'en');
+    }
+
+    public function testTranslationCachingWithCustomLocale()
+    {
+        $this->app['config']['app.locale'] = 'en';
+        $this->app['config']['translation.auto_translate'] = false;
+
+        $text = 'Hello there!';
+
+        $this->assertCachingIsWorking($text, [], 'fr');
+    }
+
+    private function assertCachingIsWorking($text, $replacements = [], $localeCode = 'en')
+    {
+        $hash = md5($text);
+
+        // After translating this text, result should be cached
+        // and next time we execute translate method with same
+        // text, it should return value from cache instead of
+        // touching the database.
+        $this->assertEquals($text, Translation::translate($text, $replacements, $localeCode));
+
+        $this->assertTrue(Cache::has("translation.{$localeCode}"));
+        $this->assertTrue(Cache::has("translation.{$localeCode}.{$hash}"));
+
+        // Delete all translation data from database.
+        TranslationModel::query()->delete();
+        LocaleModel::query()->delete();
+
+        // Execute translation again
+        $this->assertEquals($text, Translation::translate($text, $replacements, $localeCode));
+
+        // Asserting that there are no inserted values after
+        // translate method is executed means that db is not touched at all
+        // and that translation and locale is cached properly.
+        $this->assertEquals(0, TranslationModel::all()->count());
+        $this->assertEquals(0, LocaleModel::all()->count());
+    }
+
 }

@@ -13,7 +13,7 @@
         "php": ">=5.5.9",
         "illuminate/database": "5.*",
         "illuminate/support": "5.*",
-        "stichoza/google-translate-php": "3.0.*"
+        "stichoza/google-translate-php": "3.2.*"
     },
     "require-dev": {
       "orchestra/testbench": "~3.0"

@@ -120,6 +120,16 @@ class TranslationTest extends FunctionalTestCase
         $this->assertCachingIsWorking($text, [], 'fr');
     }
 
+    public function testTranslationIsResolvedFromContract()
+    {
+        $contract = 'Stevebauman\Translation\Contracts\Translation';
+
+        $translation = $this->app->make($contract);
+
+        $this->assertInstanceOf($contract, $translation);
+        $this->assertInstanceOf('Stevebauman\Translation\Translation', $translation);
+    }
+
     private function assertCachingIsWorking($text, $replacements = [], $localeCode = 'en')
     {
         $hash = md5($text);
@@ -146,5 +156,4 @@ class TranslationTest extends FunctionalTestCase
         $this->assertEquals(0, TranslationModel::all()->count());
         $this->assertEquals(0, LocaleModel::all()->count());
     }
-
 }

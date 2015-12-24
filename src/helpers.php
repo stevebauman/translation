@@ -1,5 +1,6 @@
 <?php
 
+use Illuminate\Support\Facades\Config;
 use Illuminate\Support\Facades\App;
 
 if (Config::get('translation.shorthand_enabled')) {

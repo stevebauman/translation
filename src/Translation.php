@@ -5,9 +5,10 @@ namespace Stevebauman\Translation;
 use InvalidArgumentException;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Foundation\Application;
+use Illuminate\Contracts\Foundation\Application;
+use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
 
-class Translation
+class Translation implements TranslationInterface
 {
     /**
      * Holds the application locale.
@@ -66,9 +67,7 @@ class Translation
     private $cacheTime = 30;
 
     /**
-     * Constructor.
-     *
-     * @param Application $app
+     * {@inheritdoc}
      */
     public function __construct(Application $app)
     {
@@ -88,15 +87,7 @@ class Translation
     }
 
     /**
-     * Returns the translation for the current locale.
-     *
-     * @param string $text
-     * @param array  $replacements
-     * @param string $toLocale
-     *
-     * @return string
-     *
-     * @throws InvalidArgumentException
+     * {@inheritdoc}
      */
     public function translate($text = '', $replacements = [], $toLocale = '')
     {
@@ -143,11 +134,7 @@ class Translation
     }
 
     /**
-     * Retrieves the current app's default locale.
-     *
-     * @depreciated
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getAppLocale()
     {
@@ -155,9 +142,7 @@ class Translation
     }
 
     /**
-     * Returns a route prefix to automatically set a locale depending on the segment
-     *
-     * @return null|string
+     * {@inheritdoc}
      */
     public function getRoutePrefix()
     {
@@ -173,10 +158,7 @@ class Translation
     }
 
     /**
-     * Retrieves the current locale from the session. If a locale isn't
-     * set then the default app locale is set as the current locale.
-     *
-     * @return string
+     * {@inheritdoc}
      */
     public function getLocale()
     {
@@ -188,9 +170,7 @@ class Translation
     }
 
     /**
-     * Sets the default locale property.
-     *
-     * @param string $code
+     * {@inheritdoc}
      */
     public function setLocale($code = '')
     {
@@ -198,12 +178,7 @@ class Translation
     }
 
     /**
-     * Returns the translation by the specified
-     * text and the applications default locale.
-     *
-     * @param string $text
-     *
-     * @return Model
+     * {@inheritdoc}
      */
     public function getDefaultTranslation($text)
     {
@@ -227,7 +202,7 @@ class Translation
      *
      * @return mixed
      */
-    private function makeTranslationSafePlaceholders($text, array $replace = [])
+    protected function makeTranslationSafePlaceholders($text, array $replace = [])
     {
         if(count($replace) > 0) {
             foreach ($replace as $key => $value) {
@@ -252,7 +227,7 @@ class Translation
      *
      * @return string
      */
-    private function makeTranslationSafePlaceholder($key = '')
+    protected function makeTranslationSafePlaceholder($key = '')
     {
         return '___'.strtolower($key).'___';
     }
@@ -265,7 +240,7 @@ class Translation
      *
      * @return string
      */
-    private function makeReplacements($text, array $replacements)
+    protected function makeReplacements($text, array $replacements)
     {
         if (count($replacements) > 0) {
             foreach ($replacements as $key => $value) {
@@ -285,7 +260,7 @@ class Translation
      *
      * @return Model
      */
-    private function firstOrCreateLocale($code)
+    protected function firstOrCreateLocale($code)
     {
         $cachedLocale = $this->getCacheLocale($code);
 
@@ -314,7 +289,7 @@ class Translation
      *
      * @return Model
      */
-    private function firstOrCreateTranslation(Model $locale, $text, $parentTranslation = null)
+    protected function firstOrCreateTranslation(Model $locale, $text, $parentTranslation = null)
     {
         // We'll check to see if there's a cached translation
         // first before we try and hit the database
@@ -364,7 +339,7 @@ class Translation
      *
      * @param Model $translation
      */
-    private function setCacheTranslation(Model $translation)
+    protected function setCacheTranslation(Model $translation)
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
@@ -382,7 +357,7 @@ class Translation
      *
      * @return bool|string
      */
-    private function getCacheTranslation(Model $locale, $text)
+    protected function getCacheTranslation(Model $locale, $text)
     {
         $id = $this->getTranslationCacheId($locale, $text);
 
@@ -404,7 +379,7 @@ class Translation
      *
      * @param Model $locale
      */
-    private function setCacheLocale(Model $locale)
+    protected function setCacheLocale(Model $locale)
     {
         if (!$this->cache->has($locale->code)) {
             $id = sprintf('translation.%s', $locale->code);
@@ -420,7 +395,7 @@ class Translation
      *
      * @return bool
      */
-    private function getCacheLocale($code)
+    protected function getCacheLocale($code)
     {
         $id = sprintf('translation.%s', $code);
 
@@ -440,7 +415,7 @@ class Translation
      *
      * @return string
      */
-    private function getTranslationCacheId(Model $locale, $text)
+    protected function getTranslationCacheId(Model $locale, $text)
     {
         $compressed = $this->compressString($text);
 
@@ -454,7 +429,7 @@ class Translation
      *
      * @return string
      */
-    private function getConfigLocaleByCode($code)
+    protected function getConfigLocaleByCode($code)
     {
         $locales = $this->getConfigLocales();
 
@@ -470,7 +445,7 @@ class Translation
      *
      * @param int $time
      */
-    private function setCacheTime($time)
+    protected function setCacheTime($time)
     {
         if (is_numeric($time)) {
             $this->cacheTime = $time;
@@ -482,7 +457,7 @@ class Translation
      *
      * @return string
      */
-    private function getConfigDefaultLocale()
+    protected function getConfigDefaultLocale()
     {
         return $this->config->get('translation.default_locale', 'en');
     }
@@ -492,7 +467,7 @@ class Translation
      *
      * @return string
      */
-    private function getConfigLocaleModel()
+    protected function getConfigLocaleModel()
     {
         return $this->config->get('translation.models.locale', Models\Locale::class);
     }
@@ -502,7 +477,7 @@ class Translation
      *
      * @return string
      */
-    private function getConfigTranslationModel()
+    protected function getConfigTranslationModel()
     {
         return $this->config->get('translation.models.translation', Models\Translation::class);
     }
@@ -512,7 +487,7 @@ class Translation
      *
      * @return int
      */
-    private function getConfigRequestSegment()
+    protected function getConfigRequestSegment()
     {
         return $this->config->get('translation.request_segment', 1);
     }
@@ -522,7 +497,7 @@ class Translation
      *
      * @return array
      */
-    private function getConfigLocales()
+    protected function getConfigLocales()
     {
         return $this->config->get('translation.locales');
     }
@@ -532,7 +507,7 @@ class Translation
      *
      * @return string|int
      */
-    private function getConfigCacheTime()
+    protected function getConfigCacheTime()
     {
         return $this->config->get('translation.cache_time', $this->cacheTime);
     }
@@ -542,7 +517,7 @@ class Translation
      *
      * @return bool
      */
-    private function autoTranslateEnabled()
+    protected function autoTranslateEnabled()
     {
         return $this->config->get('translation.auto_translate', true);
     }
@@ -556,7 +531,7 @@ class Translation
      *
      * @return string
      */
-    private function compressString($string)
+    protected function compressString($string)
     {
         return md5($string);
     }
@@ -570,7 +545,7 @@ class Translation
      *
      * @throws InvalidArgumentException
      */
-    private function validateText($text)
+    protected function validateText($text)
     {
         if (!is_string($text)) {
             $message = 'Invalid Argument. You must supply a string to be translated.';

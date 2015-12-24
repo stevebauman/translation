@@ -186,6 +186,46 @@ Performing this will also create the locale in your database, save the translati
 
 You must provide you're own way of updating translations (controllers/views etc) using the eloquent models provided.
 
+## Injecting Translation
+
+As of `v1.3.4` you can now inject the `Translation` contract into your controllers without the use of a facade:
+
+```php
+use Stevebauman\Translation\Contracts\Translation;
+
+class BlogController extends Controller
+{
+    /**
+     * @var Translation
+     */
+    protected $translation;
+    
+    /**
+     * Constructor.
+     *
+     * @param Translation $translation
+     */
+    public function __construct(Translation $translation)
+    {
+        $this->translation = $translation;
+    }
+    
+    /**
+     * Returns all blog entries.
+     *
+     * @return Illuminate\View\View
+     */
+    public function index()
+    {
+        $title = $this->translation->translate('My Blog');
+        
+        $entries = Blog::all();
+        
+        return view('pages.blog.index', compact('title', 'entries'));
+    }
+}
+```
+
 ## Models
 
 By default, two models are included and selected inside the configuration file. If you'd like to use your own models

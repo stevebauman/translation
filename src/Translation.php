@@ -2,6 +2,8 @@
 
 namespace Stevebauman\Translation;
 
+use ErrorException;
+use UnexpectedValueException;
 use InvalidArgumentException;
 use Stichoza\GoogleTranslate\TranslateClient;
 use Illuminate\Database\Eloquent\Model;
@@ -310,11 +312,11 @@ class Translation implements TranslationInterface
 
             try {
                 $text = $googleTranslate->translate($text);
-            } catch (\ErrorException $e) {
+            } catch (ErrorException $e) {
                 // Request to translate failed, set the text
                 // to the parent translation
                 $text = $parentTranslation->translation;
-            } catch (\UnexpectedValueException $e) {
+            } catch (UnexpectedValueException $e) {
                 // Looks like something other than text was passed in,
                 // we'll set the text to the parent translation
                 // for this exception as well

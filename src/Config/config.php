@@ -72,7 +72,7 @@ return [
     | Auto Translate
     |--------------------------------------------------------------------------
     |
-    |  Automatically translates text inserted by using google translate.
+    | Automatically translates text inserted by using google translate.
     |
     */
 

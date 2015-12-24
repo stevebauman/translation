@@ -2,6 +2,8 @@
 
 namespace Stevebauman\Translation;
 
+use Illuminate\Contracts\Foundation\Application;
+use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
 
@@ -31,20 +33,23 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function register()
     {
-        // Allow configuration to be publishable
+        // Allow configuration to be publishable.
         $this->publishes([
             __DIR__.'/Config/config.php' => config_path('translation.php'),
         ], 'config');
 
-        // Allow migrations to be publishable
+        // Allow migrations to be publishable.
         $this->publishes([
             __DIR__.'/Migrations/' => base_path('/database/migrations'),
         ], 'migrations');
 
-        // Bind translation to the IoC
-        $this->app->bind('translation', function($app) {
+        // Bind translation to the IoC.
+        $this->app->bind('translation', function(Application $app) {
             return new Translation($app);
         });
+
+        // Bind translation contract to IoC.
+        $this->app->bind(TranslationInterface::class, 'translation');
 
         // Include the helpers file for global `_t()` function
         include __DIR__.'/helpers.php';

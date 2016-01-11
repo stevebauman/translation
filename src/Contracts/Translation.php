@@ -1,4 +1,5 @@
 <?php
+
 namespace Stevebauman\Translation\Contracts;
 
 use InvalidArgumentException;

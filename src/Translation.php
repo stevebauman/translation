@@ -34,13 +34,6 @@ class Translation implements TranslationInterface
     protected $translationModel;
 
     /**
-     * Holds the current application instance.
-     *
-     * @var Application
-     */
-    protected $app;
-
-    /**
      * Holds the current cache instance.
      *
      * @var \Illuminate\Config\Repository
@@ -73,7 +66,6 @@ class Translation implements TranslationInterface
      */
     public function __construct(Application $app)
     {
-        $this->app = $app;
         $this->config = $app->make('config');
         $this->cache = $app->make('cache');
         $this->request = $app->make('request');
@@ -294,10 +286,10 @@ class Translation implements TranslationInterface
     protected function firstOrCreateTranslation(Model $locale, $text, $parentTranslation = null)
     {
         // We'll check to see if there's a cached translation
-        // first before we try and hit the database
+        // first before we try and hit the database.
         $cachedTranslation = $this->getCacheTranslation($locale, $text);
 
-        if ($cachedTranslation) {
+        if ($cachedTranslation instanceof Model) {
             return $cachedTranslation;
         }
 
@@ -357,7 +349,7 @@ class Translation implements TranslationInterface
      * @param Model $locale
      * @param string $text
      *
-     * @return bool|string
+     * @return bool|Model
      */
     protected function getCacheTranslation(Model $locale, $text)
     {
@@ -365,14 +357,12 @@ class Translation implements TranslationInterface
 
         $cachedTranslation = $this->cache->get($id);
 
-        if ($cachedTranslation) {
+        if ($cachedTranslation instanceof Model) {
             return $cachedTranslation;
         }
 
-        /*
-         * Cached translation wasn't found, let's
-         * return false so we know to generate one
-         */
+        // Cached translation wasn't found, let's return
+        // false so we know to generate one.
         return false;
     }
 

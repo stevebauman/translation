@@ -52,11 +52,11 @@ Seen:
 
     Bienvenue sur notre page d'accueil
 
-We can even use placeholders for dynamic content
+We can even use placeholders for dynamic content:
 
 View:
 
-    {{ _t('Welcome :name, to our home page', array('name' => 'John')) }}
+    {{ _t('Welcome :name, to our home page', ['name' => 'John']) }}
 
 Seen:
 
@@ -116,7 +116,7 @@ And you can even translate models easily by just plugging in your content:
 
 Or use placeholders:
 
-    {{ _t('Post :title', array('title' => $post->title)) }}
+    {{ _t('Post :title', ['title' => $post->title]) }}
 
 In your `locales` database table you'll have:
 
@@ -159,11 +159,11 @@ Just pass in the locale into the third argument inside the translation functions
 
 View:
 
-    {{ _t('Our website also supports russian!', array(), 'ru') }}
+    {{ _t('Our website also supports russian!', [], 'ru') }}
     
     <br>
     
-    {{ _t('And french!', array(), 'fr') }}
+    {{ _t('And french!', [], 'fr') }}
 
 Seen:
 
@@ -176,7 +176,7 @@ language itself. You can also perform replacements like usual:
 
 View:
 
-    {{ _t('Hello :name, we also support french!', array('name' => 'John Doe'), 'fr') }}
+    {{ _t('Hello :name, we also support french!', ['name' => 'John Doe'], 'fr') }}
 
 Seen:
 
@@ -387,14 +387,14 @@ that you don't have to worry about hitting a cap that google may impose. You eff
 
 When you add placeholders to your translation, and add the data to replace it, for example:
 
-    _t('Hi :name', array('name' => 'John'))
+    _t('Hi :name', ['name' => 'John'])
     
 Translation parses each entry in the data array to see if the placeholder actually exists for the data inserted. For example,
 in the translation field in your database, here is what is saved:
 
-    _t('Hi :name', array('name' => 'John')) // Hi __name__
+    _t('Hi :name', ['name' => 'John']) // Hi __name__
     
-    _t('Hi :name', array('test' => 'John')) // Hi :name
+    _t('Hi :name', ['test' => 'John']) // Hi :name
     
 Since the placeholder data inserted doesn't match a placeholder inside the string, the text will be left as is. The
 reason for the underscores is because google translate will try to translate text containing `:name`, however providing

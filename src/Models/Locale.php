@@ -2,8 +2,8 @@
 
 namespace Stevebauman\Translation\Models;
 
-use Stevebauman\Translation\Traits\LocaleTrait;
 use Illuminate\Database\Eloquent\Model;
+use Stevebauman\Translation\Traits\LocaleTrait;
 
 class Locale extends Model
 {
@@ -29,7 +29,7 @@ class Locale extends Model
     ];
 
     /**
-     * {@inheritdoc]
+     * {@inheritdoc].
      */
     public function translations()
     {

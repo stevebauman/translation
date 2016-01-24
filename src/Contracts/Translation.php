@@ -2,8 +2,8 @@
 
 namespace Stevebauman\Translation\Contracts;
 
-use InvalidArgumentException;
 use Illuminate\Contracts\Foundation\Application;
+use InvalidArgumentException;
 
 interface Translation
 {
@@ -21,9 +21,9 @@ interface Translation
      * @param array  $replacements
      * @param string $toLocale
      *
-     * @return string
-     *
      * @throws InvalidArgumentException
+     *
+     * @return string
      */
     public function translate($text = '', $replacements = [], $toLocale = '');
 
@@ -37,7 +37,7 @@ interface Translation
     public function getAppLocale();
 
     /**
-     * Returns a route prefix to automatically set a locale depending on the segment
+     * Returns a route prefix to automatically set a locale depending on the segment.
      *
      * @return null|string
      */

@@ -3,9 +3,9 @@
 namespace Stevebauman\Translation;
 
 use Illuminate\Contracts\Foundation\Application;
-use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
+use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
 
 class TranslationServiceProvider extends ServiceProvider
 {
@@ -21,7 +21,7 @@ class TranslationServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        Blade::directive('t', function($args) {
+        Blade::directive('t', function ($args) {
             return "<?php echo App::make('translation')->translate{$args}; ?>";
         });
     }
@@ -44,7 +44,7 @@ class TranslationServiceProvider extends ServiceProvider
         ], 'migrations');
 
         // Bind translation to the IoC.
-        $this->app->bind('translation', function(Application $app) {
+        $this->app->bind('translation', function (Application $app) {
             return new Translation($app);
         });
 

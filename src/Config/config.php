@@ -24,7 +24,6 @@ return [
 
         'locale' => Stevebauman\Translation\Models\Locale::class,
 
-
         /*
         |--------------------------------------------------------------------------
         | Translation Model

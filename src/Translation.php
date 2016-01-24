@@ -3,12 +3,12 @@
 namespace Stevebauman\Translation;
 
 use ErrorException;
-use UnexpectedValueException;
-use InvalidArgumentException;
-use Stichoza\GoogleTranslate\TranslateClient;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
+use InvalidArgumentException;
 use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
+use Stichoza\GoogleTranslate\TranslateClient;
+use UnexpectedValueException;
 
 class Translation implements TranslationInterface
 {
@@ -140,15 +140,15 @@ class Translation implements TranslationInterface
      */
     public function getRoutePrefix()
     {
-        $locale =  $this->request->segment($this->getConfigRequestSegment());
+        $locale = $this->request->segment($this->getConfigRequestSegment());
 
         $locales = $this->getConfigLocales();
 
-        if(is_array($locales) && in_array($locale, array_keys($locales))) {
+        if (is_array($locales) && in_array($locale, array_keys($locales))) {
             return $locale;
         }
 
-        return null;
+        return;
     }
 
     /**
@@ -156,7 +156,7 @@ class Translation implements TranslationInterface
      */
     public function getLocale()
     {
-        if($this->request->hasCookie('locale')) {
+        if ($this->request->hasCookie('locale')) {
             return $this->request->cookie('locale');
         } else {
             return $this->getConfigDefaultLocale();
@@ -198,7 +198,7 @@ class Translation implements TranslationInterface
      */
     protected function makeTranslationSafePlaceholders($text, array $replace = [])
     {
-        if(count($replace) > 0) {
+        if (count($replace) > 0) {
             foreach ($replace as $key => $value) {
                 // Search for :key
                 $search = ':'.$key;
@@ -319,14 +319,14 @@ class Translation implements TranslationInterface
         if ($parentTranslation) {
             // If a parent translation is given we're looking for it's child translation.
             $translation = $this->translationModel->firstOrNew([
-                $locale->getForeignKey() => $locale->getKey(),
+                $locale->getForeignKey()                 => $locale->getKey(),
                 $this->translationModel->getForeignKey() => $parentTranslation->getKey(),
             ]);
         } else {
             // Otherwise we're creating the parent translation.
             $translation = $this->translationModel->firstOrNew([
                 $locale->getForeignKey() => $locale->getKey(),
-                'translation' => $text,
+                'translation'            => $text,
             ]);
         }
 
@@ -362,7 +362,7 @@ class Translation implements TranslationInterface
      * Retrieves the cached translation from the specified locale
      * and text.
      *
-     * @param Model $locale
+     * @param Model  $locale
      * @param string $text
      *
      * @return bool|Model
@@ -407,7 +407,7 @@ class Translation implements TranslationInterface
     {
         $id = sprintf('translation.%s', $code);
 
-        if($this->cache->has($id)) {
+        if ($this->cache->has($id)) {
             return $this->cache->get($id);
         }
 
@@ -549,9 +549,9 @@ class Translation implements TranslationInterface
      *
      * @param $text
      *
-     * @return bool
-     *
      * @throws InvalidArgumentException
+     *
+     * @return bool
      */
     protected function validateText($text)
     {

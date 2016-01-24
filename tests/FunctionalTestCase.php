@@ -2,8 +2,8 @@
 
 namespace Stevebauman\Translation\Tests;
 
-use Stevebauman\Translation\TranslationServiceProvider;
 use Orchestra\Testbench\TestCase;
+use Stevebauman\Translation\TranslationServiceProvider;
 
 class FunctionalTestCase extends TestCase
 {
@@ -23,7 +23,7 @@ class FunctionalTestCase extends TestCase
     /**
      * Define environment setup.
      *
-     * @param  \Illuminate\Foundation\Application  $app
+     * @param \Illuminate\Foundation\Application $app
      *
      * @return void
      */

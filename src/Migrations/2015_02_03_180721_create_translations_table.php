@@ -1,7 +1,7 @@
 <?php
 
-use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
 
 class CreateTranslationsTable extends Migration
 {
@@ -10,8 +10,7 @@ class CreateTranslationsTable extends Migration
      */
     public function up()
     {
-        Schema::create('translations', function (Blueprint $table)
-        {
+        Schema::create('translations', function (Blueprint $table) {
             $table->increments('id');
             $table->timestamps();
             $table->integer('locale_id')->unsigned();

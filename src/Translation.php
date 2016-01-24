@@ -88,16 +88,16 @@ class Translation implements TranslationInterface
         // Make sure $text is actually a string and not and object / int
         $this->validateText($text);
 
-        // If there are replacements inside the array we need to convert them
-        // into google translate safe placeholders. ex :name to __name__
-        if (count($replacements) > 0) {
-            $text = $this->makeTranslationSafePlaceholders($text, $replacements);
-        }
-
         // Get the default translation text. This will insert the translation
         // and the default application locale if they don't
         // exist using firstOrCreate
         $defaultTranslation = $this->getDefaultTranslation($text);
+
+        // If there are replacements inside the array we need to convert them
+        // into google translate safe placeholders. ex :name to __name__
+        if (count($replacements) > 0) {
+            $defaultTranslation->translation = $this->makeTranslationSafePlaceholders($text, $replacements);
+        }
 
         // If a toLocale has been provided, we're only translating a single string, so
         // we won't call the getLocale method as it retrieves and sets the default
@@ -306,21 +306,28 @@ class Translation implements TranslationInterface
                 $text = $googleTranslate->translate($text);
             } catch (ErrorException $e) {
                 // Request to translate failed, set the text
-                // to the parent translation
+                // to the parent translation.
                 $text = $parentTranslation->translation;
             } catch (UnexpectedValueException $e) {
                 // Looks like something other than text was passed in,
                 // we'll set the text to the parent translation
-                // for this exception as well
+                // for this exception as well.
                 $text = $parentTranslation->translation;
             }
         }
 
-        $translation = $this->translationModel->firstOrCreate([
+        $translation = $this->translationModel->firstOrNew([
             $locale->getForeignKey() => $locale->getKey(),
             $this->translationModel->getForeignKey() => (isset($parentTranslation) ? $parentTranslation->getKey()  : null),
-            'translation' => $text,
         ]);
+
+        if (empty($translation->getAttribute('translation'))) {
+            // We need to make sure we don't overwrite the translation
+            // if it exists already in case it was modified.
+            $translation->setAttribute('translation', $text);
+        }
+
+        $translation->save();
 
         // Cache the translation so it's retrieved faster next time
         $this->setCacheTranslation($translation);

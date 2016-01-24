@@ -16,13 +16,6 @@ class TranslationTest extends FunctionalTestCase
         Translation::translate(['Invalid']);
     }
 
-    public function testTranslationInvalidReplacements()
-    {
-        $this->setExpectedException('ErrorException');
-
-        Translation::translate('Valid', 'Invalid');
-    }
-
     public function testTranslationDefaultLocale()
     {
         $this->assertEquals('Test', Translation::translate('Test'));
@@ -45,8 +38,32 @@ class TranslationTest extends FunctionalTestCase
 
         $translations = TranslationModel::get();
 
+        $this->assertCount(1, $translations);
         $this->assertEquals('Hi :name', $translations->get(0)->translation);
-        $this->assertEquals('Hi ___name___', $translations->get(1)->translation);
+    }
+
+    public function testTranslationNoDuplicateEntriesAfterModification()
+    {
+        $replace = ['name' => 'John'];
+
+        Translation::translate('Hello John, how are you?', $replace, 'fr');
+
+        $translations = TranslationModel::get();
+
+        $this->assertCount(2, $translations);
+
+        $french = $translations->get(1);
+
+        $french->translation = 'Changed Translation';
+
+        $french->save();
+
+        Translation::translate('Hello John, how are you?', $replace, 'fr');
+
+        $newTranslations = TranslationModel::get();
+
+        $this->assertCount(2, $newTranslations);
+        $this->assertEquals('Changed Translation', $newTranslations->get(1)->translation);
     }
 
     public function testTranslationPlaceHoldersDynamicLanguage()
@@ -128,6 +145,21 @@ class TranslationTest extends FunctionalTestCase
 
         $this->assertInstanceOf($contract, $translation);
         $this->assertInstanceOf('Stevebauman\Translation\Translation', $translation);
+    }
+
+    public function testTranslationsAreNotRecreatedAfterAutoTranslateAndCacheIsDisabled()
+    {
+        $text = 'Hello John, how are you?';
+
+        Translation::translate($text, [], 'fr');
+
+        Cache::flush();
+
+        $this->app['config']['translation.auto_translate'] = false;
+
+        Translation::translate($text, [], 'fr');
+
+        $this->assertCount(2, TranslationModel::get());
     }
 
     private function assertCachingIsWorking($text, $replacements = [], $localeCode = 'en')

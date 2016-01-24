@@ -316,10 +316,19 @@ class Translation implements TranslationInterface
             }
         }
 
-        $translation = $this->translationModel->firstOrNew([
-            $locale->getForeignKey() => $locale->getKey(),
-            $this->translationModel->getForeignKey() => (isset($parentTranslation) ? $parentTranslation->getKey()  : null),
-        ]);
+        if ($parentTranslation) {
+            // If a parent translation is given we're looking for it's child translation.
+            $translation = $this->translationModel->firstOrNew([
+                $locale->getForeignKey() => $locale->getKey(),
+                $this->translationModel->getForeignKey() => $parentTranslation->getKey(),
+            ]);
+        } else {
+            // Otherwise we're creating the parent translation.
+            $translation = $this->translationModel->firstOrNew([
+                $locale->getForeignKey() => $locale->getKey(),
+                'translation' => $text,
+            ]);
+        }
 
         if (empty($translation->getAttribute('translation'))) {
             // We need to make sure we don't overwrite the translation

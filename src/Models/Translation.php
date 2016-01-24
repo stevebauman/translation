@@ -2,8 +2,8 @@
 
 namespace Stevebauman\Translation\Models;
 
-use Stevebauman\Translation\Traits\TranslationTrait;
 use Illuminate\Database\Eloquent\Model;
+use Stevebauman\Translation\Traits\TranslationTrait;
 
 class Translation extends Model
 {

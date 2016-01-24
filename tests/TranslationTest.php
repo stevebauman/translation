@@ -3,9 +3,9 @@
 namespace Stevebauman\Translation\Tests;
 
 use Illuminate\Support\Facades\Cache;
+use Stevebauman\Translation\Facades\Translation;
 use Stevebauman\Translation\Models\Locale as LocaleModel;
 use Stevebauman\Translation\Models\Translation as TranslationModel;
-use Stevebauman\Translation\Facades\Translation;
 
 class TranslationTest extends FunctionalTestCase
 {
@@ -77,10 +77,10 @@ class TranslationTest extends FunctionalTestCase
     public function testTranslationPlaceHoldersMultiple()
     {
         $replace = [
-            'name' => 'John',
-            'apples' => '10',
+            'name'    => 'John',
+            'apples'  => '10',
             'bananas' => '15',
-            'grapes' => '20',
+            'grapes'  => '20',
         ];
 
         $expected = 'Hello John, I see you have 10 apples, 15 bananas, and 20 grapes.';

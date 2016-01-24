@@ -2,9 +2,9 @@
 
 namespace Stevebauman\Translation\Middleware;
 
-use Stevebauman\Translation\Facades\Translation;
 use Closure;
 use Illuminate\Http\Request;
+use Stevebauman\Translation\Facades\Translation;
 
 class LocaleMiddleware
 {

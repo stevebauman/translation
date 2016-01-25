@@ -40,6 +40,6 @@ class Translation extends Model
      */
     public function parent()
     {
-        return $this->belongsTo(self::class);
+        return $this->belongsTo(self::class, $this->getForeignKey());
     }
 }

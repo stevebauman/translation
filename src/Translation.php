@@ -336,7 +336,9 @@ class Translation implements TranslationInterface
             $translation->setAttribute('translation', $text);
         }
 
-        $translation->save();
+        if ($translation->isDirty()) {
+            $translation->save();
+        }
 
         // Cache the translation so it's retrieved faster next time
         $this->setCacheTranslation($translation);
@@ -351,7 +353,11 @@ class Translation implements TranslationInterface
      */
     protected function setCacheTranslation(Model $translation)
     {
-        $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
+        if ($translation->parent instanceof Model) {
+            $id = $this->getTranslationCacheId($translation->locale, $translation->parent->translation);
+        } else {
+            $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
+        }
 
         if (!$this->cache->has($id)) {
             $this->cache->put($id, $translation, $this->cacheTime);

@@ -201,7 +201,7 @@ class Translation implements TranslationInterface
     public function getDefaultTranslation($text)
     {
         $locale = $this->firstOrCreateLocale($this->getConfigDefaultLocale());
-        
+
         return $this->firstOrCreateTranslation($locale, $text);
     }
 

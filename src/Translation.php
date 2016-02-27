@@ -390,7 +390,7 @@ class Translation implements TranslationInterface
     /**
      * Remove the translation from the cache manually.
      * 
-     * @param Model  $translation
+     * @param Model $translation
      */
     protected function removeCacheTranslation(Model $translation)
     {
@@ -462,7 +462,8 @@ class Translation implements TranslationInterface
      * 
      * @param string $code
      */
-    protected function removeCacheLocale($code){
+    protected function removeCacheLocale($code)
+    {
         $id = sprintf('translation.%s', $code);
 
         if ($this->cache->has($id)) {
@@ -619,4 +620,5 @@ class Translation implements TranslationInterface
 
         return true;
     }
+    
 }

@@ -128,7 +128,7 @@ class Translation implements TranslationInterface
             return $this->makeReplacements($translation->translation, $replacements);
         } catch (\Illuminate\Database\QueryException $e) {
             // If foreign key integrity constrains fail, we have a caching issue
-            if(!$runOnce){
+            if (!$runOnce) {
                 // If this has not been run before, proceed
 
                 // Burst locale cache
@@ -137,7 +137,7 @@ class Translation implements TranslationInterface
                 // Burst translation cache
                 $this->removeCacheTranslation($this->translationModel->firstOrNew([
                         $toLocale->getForeignKey() => $toLocale->getKey(),
-                        'translation'            => $text,
+                        'translation'              => $text,
                     ])
                 );
 
@@ -388,9 +388,9 @@ class Translation implements TranslationInterface
     }
 
     /**
-     * Remove the translation from the cache manually
+     * Remove the translation from the cache manually.
      * 
-     * @param  Model  $translation
+     * @param Model  $translation
      */
     protected function removeCacheTranslation(Model $translation)
     {
@@ -458,9 +458,9 @@ class Translation implements TranslationInterface
     }
 
     /**
-     * Remove a locale from the cache
+     * Remove a locale from the cache.
      * 
-     * @param  string $code
+     * @param string $code
      */
     protected function removeCacheLocale($code){
         $id = sprintf('translation.%s', $code);

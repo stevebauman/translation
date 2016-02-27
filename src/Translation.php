@@ -126,23 +126,23 @@ class Translation implements TranslationInterface
             );
 
             return $this->makeReplacements($translation->translation, $replacements);
-        } catch ( \Illuminate\Database\QueryException $e) {
+        } catch (\Illuminate\Database\QueryException $e) {
             // If foreign key integrity constrains fail, we have a caching issue
-            if( !$runOnce ){
+            if(!$runOnce){
                 // If this has not been run before, proceed
 
                 // Burst locale cache
-                $this->removeCacheLocale( $toLocale->code );
+                $this->removeCacheLocale($toLocale->code);
 
                 // Burst translation cache
-                $this->removeCacheTranslation( $this->translationModel->firstOrNew([
+                $this->removeCacheTranslation($this->translationModel->firstOrNew([
                         $toLocale->getForeignKey() => $toLocale->getKey(),
                         'translation'            => $text,
                     ])
                 );
 
                 // Attempt translation 1 more time
-                return $this->translate( $text, $replacements, $toLocale->code, $runOnce = true );
+                return $this->translate($text, $replacements, $toLocale->code, $runOnce = true);
             } else {
                 // If it has already tried translating once and failed again,
                 // prevent infinite loops and just return the text
@@ -389,13 +389,14 @@ class Translation implements TranslationInterface
 
     /**
      * Remove the translation from the cache manually
+     * 
      * @param  Model  $translation
      */
     protected function removeCacheTranslation(Model $translation)
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 
-        if ( $this->cache->has($id) ) {
+        if ($this->cache->has($id)) {
             $this->cache->forget($id);
         }
     }
@@ -458,6 +459,7 @@ class Translation implements TranslationInterface
 
     /**
      * Remove a locale from the cache
+     * 
      * @param  string $code
      */
     protected function removeCacheLocale($code){

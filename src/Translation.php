@@ -83,48 +83,72 @@ class Translation implements TranslationInterface
     /**
      * {@inheritdoc}
      */
-    public function translate($text = '', $replacements = [], $toLocale = '')
+    public function translate($text = '', $replacements = [], $toLocale = '', $runOnce = false)
     {
-        // Make sure $text is actually a string and not and object / int
-        $this->validateText($text);
+        try {
+            // Make sure $text is actually a string and not and object / int
+            $this->validateText($text);
 
-        // Get the default translation text. This will insert the translation
-        // and the default application locale if they don't
-        // exist using firstOrCreate
-        $defaultTranslation = $this->getDefaultTranslation($text);
+            // Get the default translation text. This will insert the translation
+            // and the default application locale if they don't
+            // exist using firstOrCreate
+            $defaultTranslation = $this->getDefaultTranslation($text);
 
-        // If there are replacements inside the array we need to convert them
-        // into google translate safe placeholders. ex :name to __name__
-        if (count($replacements) > 0) {
-            $defaultTranslation->translation = $this->makeTranslationSafePlaceholders($text, $replacements);
+            // If there are replacements inside the array we need to convert them
+            // into google translate safe placeholders. ex :name to __name__
+            if (count($replacements) > 0) {
+                $defaultTranslation->translation = $this->makeTranslationSafePlaceholders($text, $replacements);
+            }
+
+            // If a toLocale has been provided, we're only translating a single string, so
+            // we won't call the getLocale method as it retrieves and sets the default
+            // session locale. If it has not been provided, we'll get the
+            // default locale, and set it on the current session.
+            if ($toLocale) {
+                $toLocale = $this->firstOrCreateLocale($toLocale);
+            } else {
+                $toLocale = $this->firstOrCreateLocale($this->getLocale());
+            }
+
+            // Check if translation is requested for default locale.
+            // If it is default locale we can just return default translation.
+            if ($defaultTranslation->getAttribute($this->localeModel->getForeignKey()) == $toLocale->getKey()) {
+                return $this->makeReplacements($defaultTranslation->translation, $replacements);
+            }
+
+            // Since we are not on default translation locale, we will have to
+            // create (or get first) translation for provided locale where
+            // parent translation is our default translation.
+            $translation = $this->firstOrCreateTranslation(
+                $toLocale,
+                $defaultTranslation->translation,
+                $defaultTranslation
+            );
+
+            return $this->makeReplacements($translation->translation, $replacements);
+        } catch (\Illuminate\Database\QueryException $e) {
+            // If foreign key integrity constrains fail, we have a caching issue
+            if (!$runOnce) {
+                // If this has not been run before, proceed
+
+                // Burst locale cache
+                $this->removeCacheLocale($toLocale->code);
+
+                // Burst translation cache
+                $this->removeCacheTranslation($this->translationModel->firstOrNew([
+                        $toLocale->getForeignKey() => $toLocale->getKey(),
+                        'translation'              => $text,
+                    ])
+                );
+
+                // Attempt translation 1 more time
+                return $this->translate($text, $replacements, $toLocale->code, $runOnce = true);
+            } else {
+                // If it has already tried translating once and failed again,
+                // prevent infinite loops and just return the text
+                return $text;
+            }
         }
-
-        // If a toLocale has been provided, we're only translating a single string, so
-        // we won't call the getLocale method as it retrieves and sets the default
-        // session locale. If it has not been provided, we'll get the
-        // default locale, and set it on the current session.
-        if ($toLocale) {
-            $toLocale = $this->firstOrCreateLocale($toLocale);
-        } else {
-            $toLocale = $this->firstOrCreateLocale($this->getLocale());
-        }
-
-        // Check if translation is requested for default locale.
-        // If it is default locale we can just return default translation.
-        if ($defaultTranslation->getAttribute($this->localeModel->getForeignKey()) == $toLocale->getKey()) {
-            return $this->makeReplacements($defaultTranslation->translation, $replacements);
-        }
-
-        // Since we are not on default translation locale, we will have to
-        // create (or get first) translation for provided locale where
-        // parent translation is our default translation.
-        $translation = $this->firstOrCreateTranslation(
-            $toLocale,
-            $defaultTranslation->translation,
-            $defaultTranslation
-        );
-
-        return $this->makeReplacements($translation->translation, $replacements);
     }
 
     /**
@@ -365,6 +389,20 @@ class Translation implements TranslationInterface
     }
 
     /**
+     * Remove the translation from the cache manually.
+     * 
+     * @param Model $translation
+     */
+    protected function removeCacheTranslation(Model $translation)
+    {
+        $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
+
+        if ($this->cache->has($id)) {
+            $this->cache->forget($id);
+        }
+    }
+
+    /**
      * Retrieves the cached translation from the specified locale
      * and text.
      *
@@ -418,6 +456,20 @@ class Translation implements TranslationInterface
         }
 
         return false;
+    }
+
+    /**
+     * Remove a locale from the cache.
+     * 
+     * @param string $code
+     */
+    protected function removeCacheLocale($code)
+    {
+        $id = sprintf('translation.%s', $code);
+
+        if ($this->cache->has($id)) {
+            $this->cache->forget($id);
+        }
     }
 
     /**

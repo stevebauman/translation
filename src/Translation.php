@@ -3,12 +3,11 @@
 namespace Stevebauman\Translation;
 
 use ErrorException;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
-use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
-use Stichoza\GoogleTranslate\TranslateClient;
 use UnexpectedValueException;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Contracts\Foundation\Application;
+use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
 
 class Translation implements TranslationInterface
 {
@@ -34,16 +33,23 @@ class Translation implements TranslationInterface
     protected $translationModel;
 
     /**
+     * Holds the translation client.
+     *
+     * @var Contracts\Client
+     */
+    protected $client;
+
+    /**
      * Holds the current cache instance.
      *
-     * @var \Illuminate\Config\Repository
+     * @var \Illuminate\Cache\CacheManager
      */
     protected $cache;
 
     /**
      * Holds the current config instance.
      *
-     * @var \Illuminate\Cache\CacheManager
+     * @var \Illuminate\Config\Repository
      */
     protected $config;
 
@@ -72,6 +78,7 @@ class Translation implements TranslationInterface
 
         $this->localeModel = $app->make($this->getConfigLocaleModel());
         $this->translationModel = $app->make($this->getConfigTranslationModel());
+        $this->client = $app->make($this->getConfigClient());
 
         // Set the default locale to the current application locale
         $this->setLocale($this->getConfigDefaultLocale());
@@ -321,13 +328,11 @@ class Translation implements TranslationInterface
         // the text through google translate and
         // save it, then cache it.
         if ($parentTranslation && $this->autoTranslateEnabled()) {
-            $googleTranslate = new TranslateClient();
-
-            $googleTranslate->setSource($parentTranslation->locale->code);
-            $googleTranslate->setTarget($locale->code);
+            $this->client->setSource($parentTranslation->locale->code);
+            $this->client->setTarget($locale->code);
 
             try {
-                $text = $googleTranslate->translate($text);
+                $text = $this->client->translate($text);
             } catch (ErrorException $e) {
                 // Request to translate failed, set the text
                 // to the parent translation.
@@ -546,6 +551,16 @@ class Translation implements TranslationInterface
     protected function getConfigTranslationModel()
     {
         return $this->config->get('translation.models.translation', Models\Translation::class);
+    }
+
+    /**
+     * Returns the translation client from the configuration.
+     *
+     * @return string
+     */
+    protected function getConfigClient()
+    {
+        return $this->config->get('translation.clients.client', Clients\GoogleTranslate::class);
     }
 
     /**

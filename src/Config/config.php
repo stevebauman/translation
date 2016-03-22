@@ -39,6 +39,39 @@ return [
 
     /*
     |--------------------------------------------------------------------------
+    | Clients
+    |--------------------------------------------------------------------------
+    |
+    |  The services providing translation.
+    */
+
+    'clients' => [
+        /*
+        |--------------------------------------------------------------------------
+        | Translation client
+        |--------------------------------------------------------------------------
+        |
+        |  The translation client providing translation service, must implement
+        |  Stevebauman\Translation\Contracts\Client.
+        |
+        */
+        'client' => Stevebauman\Translation\Clients\GoogleTranslate::class,
+//        'client' => Stevebauman\Translation\Clients\GoogleTranslateApi::class,
+
+        /*
+        |--------------------------------------------------------------------------
+        | Api Key
+        |--------------------------------------------------------------------------
+        |
+        |  If the client requires an API key, enter below.
+        |
+        */
+
+        'api_key' => env('GOOGLE_SECRET'),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
     | Request Segment
     |--------------------------------------------------------------------------
     |

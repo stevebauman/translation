@@ -2,13 +2,14 @@
 
 namespace Stevebauman\Translation\Clients;
 
-use GuzzleHttp\Client as GuzzleClient;
+use ErrorException;
+use GuzzleHttp\ClientInterface;
 use Stevebauman\Translation\Contracts\Client;
 use Illuminate\Contracts\Foundation\Application;
 
 class GoogleTranslateApi implements Client
 {
-    /** @var GuzzleClient */
+    /** @var ClientInterface */
     protected $client;
 
     /** @var \Illuminate\Config\Repository Holds the current config instance. */
@@ -25,9 +26,9 @@ class GoogleTranslateApi implements Client
 
     /**
      * @param Application $app
-     * @param GuzzleClient $client
+     * @param ClientInterface $client
      */
-    public function __construct(Application $app, GuzzleClient $client)
+    public function __construct(Application $app, ClientInterface $client)
     {
         $this->config = $app->make('config');
         $this->client = $client;
@@ -49,13 +50,13 @@ class GoogleTranslateApi implements Client
             ]
         ]);
 
-        return $this->parseResponse(json_decode($response->getBody()->getContents(), true));
+        return $this->parseResponse(json_decode($response->getBody(), true));
     }
 
     /**
      * Extract and decode the translation response
      *
-     * @param string $contents
+     * @param array $contents
      * @return mixed
      * @throws \Exception
      */
@@ -64,17 +65,15 @@ class GoogleTranslateApi implements Client
         if (isset($contents['data'])) {
             // get translation result array
             $results = $contents['data']['translations'];
-            $translatedText = $results[0]['translatedText'];
-
-            if (!empty($translatedText)) {
-                return $results[0]['translatedText'];
-            }
+            
+            // return the first result in the array
+            return $results[0]['translatedText'];
         } elseif (isset($contents['error'])) {
             // return API error details
-            throw new \Exception("Error: Result code {$contents['code']}: {$contents['message']}");
+            throw new ErrorException("Error: Result code {$contents['code']}: {$contents['message']}");
         } else {
             // It's bad. Real bad.
-            throw new \Exception("Error: Unknown response from API endpoint");
+            throw new ErrorException("Error: Unknown response from API endpoint");
         }
     }
 

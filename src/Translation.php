@@ -7,6 +7,7 @@ use InvalidArgumentException;
 use UnexpectedValueException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Foundation\Application;
+use Stevebauman\Translation\Contracts\Client as ClientInterface;
 use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
 
 class Translation implements TranslationInterface
@@ -35,7 +36,7 @@ class Translation implements TranslationInterface
     /**
      * Holds the translation client.
      *
-     * @var Contracts\Client
+     * @var ClientInterface
      */
     protected $client;
 

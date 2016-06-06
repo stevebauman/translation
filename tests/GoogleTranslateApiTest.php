@@ -114,7 +114,7 @@ class GoogleTranslateApiTest extends FunctionalTestCase
         $this->client->setSource('en');
         $this->client->setTarget('es');
 
-        $this->expectException(\ErrorException::class);
+        $this->setExpectedException(\ErrorException::class);
         $this->client->translate($text);
     }
 
@@ -139,7 +139,7 @@ class GoogleTranslateApiTest extends FunctionalTestCase
         $this->client->setSource('en');
         $this->client->setTarget('es');
 
-        $this->expectException(\ErrorException::class);
+        $this->setExpectedException(\ErrorException::class);
         $this->client->translate($text);
     }
 }

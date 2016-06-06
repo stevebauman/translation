@@ -3,12 +3,12 @@
 namespace Stevebauman\Translation;
 
 use ErrorException;
-use InvalidArgumentException;
-use UnexpectedValueException;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Foundation\Application;
+use InvalidArgumentException;
 use Stevebauman\Translation\Contracts\Client as ClientInterface;
 use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
+use UnexpectedValueException;
 
 class Translation implements TranslationInterface
 {
@@ -179,8 +179,6 @@ class Translation implements TranslationInterface
         if (is_array($locales) && in_array($locale, array_keys($locales))) {
             return $locale;
         }
-
-        return;
     }
 
     /**
@@ -396,7 +394,7 @@ class Translation implements TranslationInterface
 
     /**
      * Remove the translation from the cache manually.
-     * 
+     *
      * @param Model $translation
      */
     protected function removeCacheTranslation(Model $translation)
@@ -466,7 +464,7 @@ class Translation implements TranslationInterface
 
     /**
      * Remove a locale from the cache.
-     * 
+     *
      * @param string $code
      */
     protected function removeCacheLocale($code)

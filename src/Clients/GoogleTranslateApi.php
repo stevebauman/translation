@@ -4,8 +4,8 @@ namespace Stevebauman\Translation\Clients;
 
 use ErrorException;
 use GuzzleHttp\ClientInterface;
-use Stevebauman\Translation\Contracts\Client;
 use Illuminate\Contracts\Foundation\Application;
+use Stevebauman\Translation\Contracts\Client;
 
 class GoogleTranslateApi implements Client
 {
@@ -25,7 +25,7 @@ class GoogleTranslateApi implements Client
     protected $target;
 
     /**
-     * @param Application $app
+     * @param Application     $app
      * @param ClientInterface $client
      */
     public function __construct(Application $app, ClientInterface $client)
@@ -36,36 +36,39 @@ class GoogleTranslateApi implements Client
 
     /**
      * @param $text
+     *
      * @return string
      */
     public function translate($text)
     {
         $response = $this->client->request('GET', $this->endpoint, [
             'query' => [
-                'key' => $this->getApiKey(),
+                'key'    => $this->getApiKey(),
                 'format' => 'html', // text | html for source text
                 'source' => $this->getSource(), // source language
                 'target' => $this->getTarget(),
-                'q' => $text,
-            ]
+                'q'      => $text,
+            ],
         ]);
 
         return $this->parseResponse(json_decode($response->getBody(), true));
     }
 
     /**
-     * Extract and decode the translation response
+     * Extract and decode the translation response.
      *
      * @param array $contents
-     * @return mixed
+
      * @throws \Exception
+     *
+     * @return mixed
      */
     protected function parseResponse($contents)
     {
         if (isset($contents['data'])) {
             // get translation result array
             $results = $contents['data']['translations'];
-            
+
             // return the first result in the array
             return $results[0]['translatedText'];
         } elseif (isset($contents['error'])) {
@@ -73,7 +76,7 @@ class GoogleTranslateApi implements Client
             throw new ErrorException("Error: Result code {$contents['code']}: {$contents['message']}");
         } else {
             // It's bad. Real bad.
-            throw new ErrorException("Error: Unknown response from API endpoint");
+            throw new ErrorException('Error: Unknown response from API endpoint');
         }
     }
 
@@ -108,7 +111,7 @@ class GoogleTranslateApi implements Client
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setSource($source = null)
     {
@@ -116,7 +119,7 @@ class GoogleTranslateApi implements Client
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTarget($target)
     {

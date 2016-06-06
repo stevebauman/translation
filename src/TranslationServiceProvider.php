@@ -44,7 +44,7 @@ class TranslationServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/Migrations/' => base_path('/database/migrations'),
         ], 'migrations');
-        
+
         // Bind guzzle contract to IoC.
         $this->app->bind(ClientInterface::class, Client::class);
 

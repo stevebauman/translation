@@ -2,11 +2,11 @@
 
 namespace Stevebauman\Translation\Tests;
 
+use GuzzleHttp\ClientInterface as Guzzle;
 use Mockery as m;
 use Psr\Http\Message\ResponseInterface;
-use GuzzleHttp\ClientInterface as Guzzle;
-use Stevebauman\Translation\Contracts\Client;
 use Stevebauman\Translation\Clients\GoogleTranslateApi;
+use Stevebauman\Translation\Contracts\Client;
 
 class GoogleTranslateApiTest extends FunctionalTestCase
 {
@@ -32,22 +32,22 @@ class GoogleTranslateApiTest extends FunctionalTestCase
 
         $this->guzzle->shouldReceive('request')->once()->with('GET', 'https://www.googleapis.com/language/translate/v2', [
             'query' => [
-                'key' => config('translation.clients.api_key'),
+                'key'    => config('translation.clients.api_key'),
                 'format' => 'html',
                 'source' => 'en',
                 'target' => 'es',
-                'q' => $text,
-            ]
+                'q'      => $text,
+            ],
         ])->andReturn($response);
 
         $response->shouldReceive('getBody')->andReturn(json_encode([
             'data' => [
                 'translations' => [
                     [
-                        'translatedText' => '¡Hola Mundo!'
-                    ]
-                ]
-            ]
+                        'translatedText' => '¡Hola Mundo!',
+                    ],
+                ],
+            ],
         ]));
 
         $this->client->setSource('en');
@@ -65,11 +65,11 @@ class GoogleTranslateApiTest extends FunctionalTestCase
 
         $this->guzzle->shouldReceive('request')->once()->with('GET', 'https://www.googleapis.com/language/translate/v2', [
             'query' => [
-                'key' => config('translation.clients.api_key'),
+                'key'    => config('translation.clients.api_key'),
                 'format' => 'html',
                 'source' => 'en',
                 'target' => 'es',
-                'q' => $text,
+                'q'      => $text,
             ]
         ])->andReturn($response);
 
@@ -77,13 +77,13 @@ class GoogleTranslateApiTest extends FunctionalTestCase
             'data' => [
                 'translations' => [
                     [
-                        'translatedText' => '¡Hola Mundo!'
+                        'translatedText' => '¡Hola Mundo!',
                     ],
                     [
-                        'translatedText' => 'Cerveza'
-                    ]
-                ]
-            ]
+                        'translatedText' => 'Cerveza',
+                    ],
+                ],
+            ],
         ]));
 
         $this->client->setSource('en');
@@ -101,12 +101,12 @@ class GoogleTranslateApiTest extends FunctionalTestCase
 
         $this->guzzle->shouldReceive('request')->once()->with('GET', 'https://www.googleapis.com/language/translate/v2', [
             'query' => [
-                'key' => config('translation.clients.api_key'),
+                'key'    => config('translation.clients.api_key'),
                 'format' => 'html',
                 'source' => 'en',
                 'target' => 'es',
-                'q' => $text,
-            ]
+                'q'      => $text,
+            ],
         ])->andReturn($response);
 
         $response->shouldReceive('getBody')->andReturn(json_encode([]));
@@ -126,12 +126,12 @@ class GoogleTranslateApiTest extends FunctionalTestCase
 
         $this->guzzle->shouldReceive('request')->once()->with('GET', 'https://www.googleapis.com/language/translate/v2', [
             'query' => [
-                'key' => config('translation.clients.api_key'),
+                'key'    => config('translation.clients.api_key'),
                 'format' => 'html',
                 'source' => 'en',
                 'target' => 'es',
-                'q' => $text,
-            ]
+                'q'      => $text,
+            ],
         ])->andReturn($response);
 
         $response->shouldReceive('getBody')->andReturn(json_encode(['error' => 'foo']));

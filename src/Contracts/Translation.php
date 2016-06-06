@@ -2,8 +2,8 @@
 
 namespace Stevebauman\Translation\Contracts;
 
-use InvalidArgumentException;
 use Illuminate\Contracts\Foundation\Application;
+use InvalidArgumentException;
 
 interface Translation
 {

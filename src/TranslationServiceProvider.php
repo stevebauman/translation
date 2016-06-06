@@ -2,6 +2,8 @@
 
 namespace Stevebauman\Translation;
 
+use GuzzleHttp\Client;
+use GuzzleHttp\ClientInterface;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Support\Facades\Blade;
 use Illuminate\Support\ServiceProvider;
@@ -42,6 +44,9 @@ class TranslationServiceProvider extends ServiceProvider
         $this->publishes([
             __DIR__.'/Migrations/' => base_path('/database/migrations'),
         ], 'migrations');
+
+        // Bind guzzle contract to IoC.
+        $this->app->bind(ClientInterface::class, Client::class);
 
         // Bind translation to the IoC.
         $this->app->bind('translation', function (Application $app) {

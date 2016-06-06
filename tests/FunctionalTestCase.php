@@ -39,6 +39,8 @@ class FunctionalTestCase extends TestCase
             'en' => 'English',
             'fr' => 'French',
         ]);
+
+        $app['config']->set('translation.clients.api_key', 123456);
     }
 
     /**

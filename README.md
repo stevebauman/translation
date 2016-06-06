@@ -70,13 +70,9 @@ path:
     
 ## Installation
 
-Require translation in your composer.json file
+Require the translation package 
 
-    "stevebauman/translation": "1.3.*"
-    
-Then run the composer update command on your project source
-
-    composer update
+    composer require stevebauman/translation
 
 Add the service provider to your `config/app.php` config file
 
@@ -88,7 +84,7 @@ Add the facade to your aliases in your `config/app.php` config file
     
 Publish the migrations
 
-    php artisan vendor:publish
+    php artisan vendor:publish --provider="Stevebauman\Translation\TranslationServiceProvider"
     
 Run the migrations
 
@@ -401,11 +397,6 @@ reason for the underscores is because google translate will try to translate tex
 double underscores on both sides of the placeholder, prevents google from translating that specific word, allowing us to translate
 everything else, but keep placeholders in tact. Translation then replaces the double underscore variant of the placeholder
 (in this case `__name__`) at runtime.
-    
-#### Will my translations be erased / modified if I run the scan command?
-
-No. No translations are ever removed or updated from the scan command. Translations are only added. You will have to manage
-translations that are no longer in use. This may be changed in the future.
 
 #### If I update / modify the text inside the translation function, what happens to it's translations?
 

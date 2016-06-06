@@ -13,10 +13,13 @@
         "php": ">=5.5.9",
         "illuminate/database": "5.*",
         "illuminate/support": "5.*",
-        "stichoza/google-translate-php": "3.2.*"
+        "stichoza/google-translate-php": "~3.2.7",
+        "guzzlehttp/guzzle": "~6.0"
     },
     "require-dev": {
-      "orchestra/testbench": "~3.0"
+        "orchestra/testbench": "~3.0",
+        "mockery/mockery": "^0.9.4",
+        "phpunit/phpunit": "~4|~5"
     },
     "archive": {
       "exclude": ["/tests"]

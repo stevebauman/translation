@@ -19,7 +19,7 @@ class GoogleTranslate implements Client
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setSource($source = null)
     {
@@ -27,7 +27,7 @@ class GoogleTranslate implements Client
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function setTarget($target)
     {
@@ -35,7 +35,7 @@ class GoogleTranslate implements Client
     }
 
     /**
-     * @inheritDoc
+     * {@inheritdoc}
      */
     public function translate($text)
     {

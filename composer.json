@@ -19,7 +19,7 @@
     "require-dev": {
         "orchestra/testbench": "~3.0",
         "mockery/mockery": "^0.9.4",
-        "phpunit/phpunit": "^5.3"
+        "phpunit/phpunit": "~4|~5"
     },
     "archive": {
       "exclude": ["/tests"]

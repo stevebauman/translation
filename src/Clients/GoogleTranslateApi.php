@@ -57,7 +57,8 @@ class GoogleTranslateApi implements Client
     /**
      * Extract and decode the translation response.
      *
-     * @param  array      $contents
+     * @param array $contents
+     *
      * @throws \Exception
      *
      * @return mixed

@@ -16,7 +16,7 @@ class FunctionalTestCase extends TestCase
 
         $this->artisan('migrate', [
             '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__ . '/../src/Migrations'),
+            '--realpath' => realpath(__DIR__.'/../src/Migrations'),
         ]);
     }
 
@@ -31,7 +31,7 @@ class FunctionalTestCase extends TestCase
     {
         $app['config']->set('database.default', 'testbench');
         $app['config']->set('database.connections.testbench', [
-            'driver' => 'sqlite',
+            'driver'   => 'sqlite',
             'database' => ':memory:',
         ]);
 

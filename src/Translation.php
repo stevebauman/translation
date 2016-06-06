@@ -3,8 +3,8 @@
 namespace Stevebauman\Translation;
 
 use ErrorException;
-use Illuminate\Database\Eloquent\Model;
 use Illuminate\Contracts\Foundation\Application;
+use Illuminate\Database\Eloquent\Model;
 use InvalidArgumentException;
 use Stevebauman\Translation\Contracts\Client as ClientInterface;
 use Stevebauman\Translation\Contracts\Translation as TranslationInterface;

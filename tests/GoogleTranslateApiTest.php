@@ -70,7 +70,7 @@ class GoogleTranslateApiTest extends FunctionalTestCase
                 'source' => 'en',
                 'target' => 'es',
                 'q'      => $text,
-            ]
+            ],
         ])->andReturn($response);
 
         $response->shouldReceive('getBody')->andReturn(json_encode([

@@ -46,7 +46,7 @@ return [
     */
 
     'clients' => [
-        
+
         /*
         |--------------------------------------------------------------------------
         | Translation client
@@ -56,7 +56,7 @@ return [
         |  Stevebauman\Translation\Contracts\Client.
         |
         */
-        
+
         'client' => Stevebauman\Translation\Clients\GoogleTranslate::class,
 
         /*

@@ -1,5 +1,5 @@
 {
-    "name": "stevebauman/translation",
+    "name": "spiritix/translation",
     "description": "An easy automatic database driven translator for Laravel 5",
     "tags": ["lang", "translation", "translate", "localization", "localize", "laravel"],
     "license": "MIT",

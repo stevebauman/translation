@@ -81,8 +81,9 @@ class Translation implements TranslationInterface
         $this->translationModel = $app->make($this->getConfigTranslationModel());
         $this->client = $app->make($this->getConfigClient());
 
+        // TODO: Temporary fix
         // Set the default locale to the current application locale
-        $this->setLocale($this->getConfigDefaultLocale());
+        // $this->setLocale($this->getConfigDefaultLocale()); 
 
         // Set the cache time from the configuration
         $this->setCacheTime($this->getConfigCacheTime());

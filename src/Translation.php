@@ -5,6 +5,8 @@ namespace Stevebauman\Translation;
 use ErrorException;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\App;
+use Illuminate\Support\Facades\Session;
 use InvalidArgumentException;
 use Stevebauman\Translation\Contracts\Client as ClientInterface;
 use Stevebauman\Translation\Contracts\Translation as TranslationInterface;
@@ -81,9 +83,23 @@ class Translation implements TranslationInterface
         $this->translationModel = $app->make($this->getConfigTranslationModel());
         $this->client = $app->make($this->getConfigClient());
 
-        // TODO: Temporary fix
+        if (!Session::has('locale')) {
+            $locale = substr($this->request->server('HTTP_ACCEPT_LANGUAGE'), 0, 2);
+
+            if (!in_array($locale, config('translation.available_locales'))) {
+                $locale = config('app.locale');
+            }
+
+            Session::set('locale', $locale);
+        }
+        else {
+            $locale = Session::get('locale');
+        }
+
+        App::setLocale($locale);
+
         // Set the default locale to the current application locale
-        // $this->setLocale($this->getConfigDefaultLocale()); 
+         $this->setLocale(App::getLocale());
 
         // Set the cache time from the configuration
         $this->setCacheTime($this->getConfigCacheTime());
@@ -187,11 +203,7 @@ class Translation implements TranslationInterface
      */
     public function getLocale()
     {
-        if ($this->request->hasCookie('locale')) {
-            return $this->request->cookie('locale');
-        } else {
-            return $this->getConfigDefaultLocale();
-        }
+        return $this->locale;
     }
 
     /**

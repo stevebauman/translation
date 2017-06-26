@@ -150,6 +150,12 @@ class Translation implements TranslationInterface
                 $defaultTranslation
             );
 
+            // If there are replacements inside the array we need to convert them
+            // into google translate safe placeholders. ex :name to name
+            if (count($replacements) > 0) {
+                $translation->translation = $this->makeTranslationSafePlaceholders($translation->translation, $replacements);
+            }
+            
             return $this->makeReplacements($translation->translation, $replacements);
         } catch (\Illuminate\Database\QueryException $e) {
             // If foreign key integrity constrains fail, we have a caching issue

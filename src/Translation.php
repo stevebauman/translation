@@ -90,7 +90,7 @@ class Translation implements TranslationInterface
                 $locale = config('app.locale');
             }
 
-            Session::set('locale', $locale);
+            Session::put('locale', $locale);
         }
         else {
             $locale = Session::get('locale');

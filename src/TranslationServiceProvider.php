@@ -49,7 +49,7 @@ class TranslationServiceProvider extends ServiceProvider
         $this->app->bind(ClientInterface::class, Client::class);
 
         // Bind translation to the IoC.
-        $this->app->bind('translation', function (Application $app) {
+        $this->app->singleton('translation', function (Application $app) {
             return new Translation($app);
         });
 

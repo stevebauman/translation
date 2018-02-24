@@ -15,7 +15,7 @@ class FunctionalTestCase extends TestCase
         parent::setUp();
 
         $this->loadMigrationsFrom(__DIR__."/../src/Migrations");
-        
+
         $this->artisan('migrate');
     }
 

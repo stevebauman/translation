@@ -9,6 +9,12 @@ use Stevebauman\Translation\Models\Translation as TranslationModel;
 
 class TranslationTest extends FunctionalTestCase
 {
+    public function testDefaultTranslationCanBeSet(){
+        Translation::setLocale('fr');
+
+        $this->assertEquals("Bonjour le monde", Translation::translate("Hello World"));
+    }
+
     public function testTranslationInvalidText()
     {
         $this->setExpectedException('InvalidArgumentException');

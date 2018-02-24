@@ -14,10 +14,9 @@ class FunctionalTestCase extends TestCase
     {
         parent::setUp();
 
-        $this->artisan('migrate', [
-            '--database' => 'testbench',
-            '--realpath' => realpath(__DIR__.'/../src/Migrations'),
-        ]);
+        $this->loadMigrationsFrom(__DIR__."/../src/Migrations");
+        
+        $this->artisan('migrate');
     }
 
     /**
@@ -61,5 +60,14 @@ class FunctionalTestCase extends TestCase
     protected function getPackageAliases($app)
     {
         return ['Translation' => \Stevebauman\Translation\Facades\Translation::class];
+    }
+
+    protected function loadMigrationsFrom($paths) {
+        $paths = (is_array($paths)) ? $paths : [$paths];
+        $this->app->afterResolving('migrator', function ($migrator) use ($paths) {
+            foreach ((array) $paths as $path) {
+                $migrator->path($path);
+            }
+        });
     }
 }

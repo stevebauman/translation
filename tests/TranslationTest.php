@@ -9,9 +9,22 @@ use Stevebauman\Translation\Models\Translation as TranslationModel;
 
 class TranslationTest extends FunctionalTestCase
 {
+    public function testItCanDetectLocalesSetByBrowsers(){
+        request()->server->set('HTTP_ACCEPT_LANGUAGE','es-Spain');
+
+        $this->assertEquals("es",Translation::detectLocale(request()));
+        $this->assertEquals("Hola",Translation::translate("Hello"));
+    }
+
+    public function testDefaultTranslationCanBeSet(){
+        Translation::setLocale('fr');
+
+        $this->assertEquals("Bonjour le monde", Translation::translate("Hello World"));
+    }
+
     public function testTranslationInvalidText()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         Translation::translate(['Invalid']);
     }

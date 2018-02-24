@@ -19,7 +19,7 @@ class LocaleMiddleware
      */
     public function handle(Request $request, Closure $next)
     {
-        $request->cookies->set('locale', Translation::getRoutePrefix());
+        $request->cookies->set('locale', Translation::detectLocale($request));
 
         return $next($request);
     }

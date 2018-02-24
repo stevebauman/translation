@@ -635,4 +635,24 @@ class Translation implements TranslationInterface
 
         return true;
     }
+
+    /**
+     * Detects the Default Locale Based on
+     */
+
+    public function detectLocale($request){
+        if (!$request->hasCookie('locale')) {
+            $locale = substr($request->server('HTTP_ACCEPT_LANGUAGE'), 0, 2);
+
+            if (in_array($locale, config('translation.locales'))) {
+                $request->cookies->set('locale', $locale);
+            }
+        } else {
+            $locale = $request->cookie('locale');
+        }
+
+        $this->setLocale($locale);
+
+        return $locale;
+    }
 }

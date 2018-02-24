@@ -397,7 +397,7 @@ class Translation implements TranslationInterface
      *
      * @param Model $translation
      */
-    protected function removeCacheTranslation(Model $translation)
+    public function removeCacheTranslation(Model $translation)
     {
         $id = $this->getTranslationCacheId($translation->locale, $translation->translation);
 

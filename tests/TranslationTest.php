@@ -24,7 +24,7 @@ class TranslationTest extends FunctionalTestCase
 
     public function testTranslationInvalidText()
     {
-        $this->setExpectedException('InvalidArgumentException');
+        $this->expectException('InvalidArgumentException');
 
         Translation::translate(['Invalid']);
     }

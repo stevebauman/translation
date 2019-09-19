@@ -1,5 +1,5 @@
 {
-    "name": "spiritix/translation",
+    "name": "stevebauman/translation",
     "description": "An easy automatic database driven translator for Laravel 5",
     "tags": ["lang", "translation", "translate", "localization", "localize", "laravel"],
     "license": "MIT",
@@ -10,16 +10,16 @@
         }
     ],
     "require": {
-        "php": ">=5.5.9",
-        "illuminate/database": "5.*",
-        "illuminate/support": "5.*",
+        "php": ">=7.2",
+        "illuminate/database": "6.*",
+        "illuminate/support": "6.*",
         "stichoza/google-translate-php": "~3.2.7",
         "guzzlehttp/guzzle": "~6.0"
     },
     "require-dev": {
         "orchestra/testbench": "~3.0",
         "mockery/mockery": "^0.9.4",
-        "phpunit/phpunit": "~4|~5"
+        "phpunit/phpunit": "^7"
     },
     "archive": {
       "exclude": ["/tests"]

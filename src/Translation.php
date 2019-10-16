@@ -508,7 +508,7 @@ class Translation implements TranslationInterface
     {
         $compressed = $this->compressString($text);
 
-        return sprintf('translation.%s.%s', $locale->code, $compressed);
+        return sprintf('translation.%s.%s.%s', env('APP_ENV', 'local'), $locale->code, $compressed);
     }
 
     /**

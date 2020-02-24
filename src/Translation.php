@@ -632,7 +632,7 @@ class Translation implements TranslationInterface
      */
     protected function compressString($string)
     {
-	return md5(strtolower($string));
+        return md5(strtolower($string));
     }
 
     /**

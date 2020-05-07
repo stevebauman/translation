@@ -186,11 +186,7 @@ class Translation implements TranslationInterface
      */
     public function getLocale()
     {
-        if ($this->request->hasCookie('locale')) {
-            return $this->request->cookie('locale');
-        } else {
-            return $this->getConfigDefaultLocale();
-        }
+        return app()->getLocale();
     }
 
     /**

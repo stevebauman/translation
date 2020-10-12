@@ -113,10 +113,12 @@ class Translation implements TranslationInterface
 
     public function __destruct()
     {
-        Actualize::dispatch(array_values($this->translationIds))
-            ->onQueue(config('queue.queues.translations'));
+        if (count($this->translationIds) > 0) {
+            Actualize::dispatch(array_values($this->translationIds))
+                ->onQueue(config('queue.queues.translations'));
 
-        $this->translationIds = [];
+            $this->translationIds = [];
+        }
     }
 
     /**
@@ -465,7 +467,7 @@ class Translation implements TranslationInterface
         if ($cachedTranslation instanceof Model) {
 
             if (empty($cachedTranslation->is_relevant)) {
-                $this->removeCacheTranslation($cachedTranslation);
+                $this->cache->forget($id);
             }
 
             return $cachedTranslation;

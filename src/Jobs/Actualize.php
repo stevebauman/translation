@@ -48,6 +48,10 @@ class Actualize implements ShouldQueue
             DB::table('translations')
                 ->where('id', $id)
                 ->update(['is_relevant' => true]);
+
+            DB::table('translations')
+                ->where('translation_id', $id)
+                ->update(['is_relevant' => true]);
         }
 
         DB::commit();

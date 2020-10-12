@@ -465,7 +465,7 @@ class Translation implements TranslationInterface
         if ($cachedTranslation instanceof Model) {
 
             if (empty($cachedTranslation->is_relevant)) {
-                $this->cache->remove($id);
+                $this->removeCacheTranslation($cachedTranslation);
             }
 
             return $cachedTranslation;

@@ -115,7 +115,7 @@ class Translation implements TranslationInterface
     {
         if (count($this->translationIds) > 0) {
             Actualize::dispatch(array_values($this->translationIds))
-                ->onQueue(config('queue.queues.translations'));
+                ->onQueue(config('queue.queues.files'));
 
             $this->translationIds = [];
         }

@@ -72,6 +72,16 @@ class Translation implements TranslationInterface
     private $cacheTime = 30;
 
     /**
+     * @var array
+     */
+    private $translationIds = [];
+
+    /**
+     * @var int
+     */
+    private $maxTokensPerJob = 100;
+
+    /**
      * {@inheritdoc}
      */
     public function __construct(Application $app)
@@ -106,6 +116,16 @@ class Translation implements TranslationInterface
         $this->setCacheTime($this->getConfigCacheTime());
     }
 
+    public function __destruct()
+    {
+        if (count($this->translationIds) > 0) {
+            Actualize::dispatch(array_values($this->translationIds))
+                ->onQueue(config('queue.queues.files'));
+
+            $this->translationIds = [];
+        }
+    }
+
     /**
      * {@inheritdoc}
      */
@@ -121,8 +141,15 @@ class Translation implements TranslationInterface
             $defaultTranslation = $this->getDefaultTranslation($text);
 
             if (empty($defaultTranslation->is_relevant)) {
-                Actualize::dispatch([$defaultTranslation->id])
-                    ->onQueue(config('queue.queues.files'));
+                if (count($this->translationIds) >= $this->maxTokensPerJob) {
+                    Actualize::dispatch(array_values($this->translationIds))
+                        ->onQueue(config('queue.queues.files'));
+
+                    $this->translationIds = [];
+                }
+                else {
+                    $this->translationIds[$defaultTranslation->id] = $defaultTranslation->id;
+                }
             }
 
             // If there are replacements inside the array we need to convert them
@@ -157,8 +184,15 @@ class Translation implements TranslationInterface
             );
 
             if (empty($translation->is_relevant)) {
-                Actualize::dispatch([$translation->id])
-                    ->onQueue(config('queue.queues.files'));
+                if (count($this->translationIds) >= $this->maxTokensPerJob) {
+                    Actualize::dispatch(array_values($this->translationIds))
+                        ->onQueue(config('queue.queues.files'));
+
+                    $this->translationIds = [];
+                }
+                else {
+                    $this->translationIds[$translation->id] = $translation->id;
+                }
             }
 
             // If there are replacements inside the array we need to convert them
